@@ -1,0 +1,45 @@
+---
+title: "Power Law"
+author: "Berrie, Michel, Galuppini, Laurent"
+date: "2025-03-07"
+output: pdf_document
+---
+#Résultats théoriques
+
+
+On étudie le processus de Weibull (power law process dans la terminologie américaine). C'est un processus de Poisson d'intensité : $\lambda(s)=\frac{\beta}{\alpha}(\frac{s}{\alpha})^{\beta-1}$ où les paramètres $\alpha$ et $\beta$ sont inconnus.
+
+Nous allons estimer les paramètres $\alpha$ et $\beta$ par leurs estimateurs de maximum vraisemblance (MLE), $\hat{\alpha}$ et $\hat{\beta}$.
+
+ on note  $\hat {\theta}$=($\hat{\alpha}$,$\hat{\beta}$.)
+ 
+ $\hat{\theta} \in \arg\max_{\theta \in \mathbb{R}^+}  L(N,\theta)$
+ 
+
+D'après la proposition 4.14 du cours, la vraisemblance vaut :
+$L((N_t)_{t \in[0,T]; \theta})$ = $\left( \prod_{i=1}^{N_t}\lambda(T_i) \right) \exp \left(-\int_0^T \lambda(x)dx \right)$
+
+On remplace $\lambda$ par la fonction du Weibull.
+
+
+écrire l integrale de la feuille d'ema 
+
+
+Nous passons au log pour calculer la logvraisemblance :
+
+$l((N_t)_{t \in[0,T]; \theta})=log(L((N_t)_{t \in[0,T]; \theta}))$ = $N_t((log(\beta)-\beta log(\alpha))+ (\beta-1) \sum_{i=1}^{N_t}log(T_i)-(\frac{t}{\alpha})^\beta$
+
+Nous allons calculer le gradient de la logvraisemblance pour trouver les estimateurs qui maximisent la log vraisemblance
+$\nabla$
+gradient, hessienne locale pour verifier la concavité
+##Goodness of fit test
+si il reste du temps
+
+
+#Résultats numériques 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
