@@ -38,8 +38,66 @@ si il reste du temps
 
 #Résultats numériques 
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+Second, the students are asked to perform numerical simulations in order to validate, from a practical point of view, the confidence intervals presented in [Cocozza-Thivent, 1997], 
+
+
+Simulation of a homogeneous Poisson process with intensity `lambda` on the window [0,`Tmax`].
+```{r simulPPh1,eval=FALSE}
+simulPPh1 <- function(lambda,Tmax)
+{ n=rpois(1,lambda*Tmax)
+  u=runif(n,0,Tmax)
+  p=sort(u)
+  return(p)
+}
 ```
+
+Simulation d'un processus de poisson inhomogène :
+```{r}
+simulPPi = function(lambda_fct,Tmax,M)
+{n=cumsum(lambda_fct(0:Tmax))
+  t= simulPPh1(M,Tmax)
+  y=runif(t,0,M)
+  t[y<=lambda_fct(t)]
+  return(t)
+}
+```
+
+Let us define a plot function for a counting process `PP`. 
+```{r plot.PP}
+plot.PP<- function(PP)
+{
+  # plot the counting process (with jumps of size 1 (starting at point (0,0))):
+  plot(c(0,PP),0:length(PP),type="s",xlab="time t",ylab="number of events by time t")
+  # add the arrival times on the horizontal axis: 
+  points(PP,0*PP,type="p",pch=16)
+  # link arrival times with the counts:
+  lines(PP,0:(length(PP)-1),type="h",lty=2)
+}
+```
+
+```{r lambda1,eval=FALSE}
+Tmax=1000
+alpha = 1
+beta= 1
+lambda_fct <- function(x){return(alpha/beta*(x/alpha)^(beta-1))}
+M1=10
+PPi1 = simulPPi(lambda_fct,Tmax,M1)
+par(mfrow=c(1,2))
+curve(lambda_fct,from=0,to=Tmax,n=1000)
+plot.PP(PPi1)
+```
+
+##estimateurs de alpha et beta
+ MLE
+ 
+```{r}
+estimalpha=T*exp(-1/beta*ln(simulPPi()))
+  
+```
+ 
+
+
+
+
 
 
