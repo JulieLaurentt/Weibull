@@ -1,0 +1,248 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Power Law},
+  pdfauthor={Berrie, Michel, Galuppini, Laurent},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Power Law}
+\author{Berrie, Michel, Galuppini, Laurent}
+\date{2025-03-07}
+
+\begin{document}
+\maketitle
+
+\#1. Résultats théoriques :
+
+On étudie le processus de Weibull (power law process dans la
+terminologie américaine). C'est un processus de Poisson d'intensité :
+\(\lambda(s)=\frac{\beta}{\alpha}(\frac{s}{\alpha})^{\beta-1}\) où les
+paramètres \(\alpha\) et \(\beta\) sont inconnus.
+
+\#\#1. 1 Estimateurs des paramètres inconnus :
+
+Nous allons estimer les paramètres \(\alpha\) et \(\beta\) par leurs
+estimateurs de maximum vraisemblance (MLE), \(\hat{\alpha}\) et
+\(\hat{\beta}\).
+
+On note \(\hat {\theta}\)=(\(\hat{\alpha}\),\(\hat{\beta}\).) tel que :
+
+\(\hat{\theta} \in \arg\max_{\theta \in \mathbb{R}^+}  L(N,\theta)\)
+
+D'après la proposition 4.14 du cours, la vraisemblance vaut dans le cas
+d'un processus inhomogène :
+
+\(L((N_t)_{t \in[0,T]; \theta})\) =
+\(\left( \prod_{i=1}^{N_t}\lambda(T_i) \right) \exp \left(-\int_0^T \lambda(x)dx \right)\)
+
+On remplace \(\lambda\) par la fonction du Weibull ainsi :
+
+écrire l integrale de la feuille d'ema
+
+Nous passons au log pour calculer la logvraisemblance (nous travaillons
+sur R+) : =\textgreater{} justifier que on travail sur R+
+
+\(l((N_t)_{t \in[0,T]; \theta})=log(L((N_t)_{t \in[0,T]; \theta}))\) =
+\(N_t((log(\beta)-\beta log(\alpha))+ (\beta-1) \sum_{i=1}^{N_t}log(T_i)-(\frac{t}{\alpha})^\beta\)
+
+Ensuite nous allons calculer le gradient de la logvraisemblance pour
+trouver les estimateurs qui maximisent la log vraisemblance.
+
+=\textgreater{} \(\nabla\)
+
+Pour vérifier que nous sommes bien sur un maximum (vérification de la
+concavité) nous allons analyser le signe de la Hessienne localement en
+ce point :
+
+=\textgreater gradient, hessienne locale pour verifier la concavité
+
+Finalement on a bien
+\(\hat{\theta} \in \arg\max_{\theta \in \mathbb{R}^+}  L(N,\theta)\) et
+nos estimateurs sont bien des estimateurs de maximum vraisemblance.
+
+Ces estimateurs vont nous permettre de travailler ensuite sur la
+construction d'intervalle de confiance de nos paramètres inconnus.
+
+C'est ce que nous allons faire ci-dessous.
+
+\#\#1. 2. Intervalle de confiance et loi
+
+=\textgreater{} César et Florian
+
+\#Résultats numériques
+
+Second, the students are asked to perform numerical simulations in order
+to validate, from a practical point of view, the confidence intervals
+presented in {[}Cocozza-Thivent, 1997{]},
+
+Simulation of a homogeneous Poisson process with intensity
+\texttt{lambda} on the window {[}0,\texttt{Tmax}{]}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{simulPPh1 }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(lambda,Tmax)}
+\NormalTok{\{ n}\OtherTok{=}\FunctionTok{rpois}\NormalTok{(}\DecValTok{1}\NormalTok{,lambda}\SpecialCharTok{*}\NormalTok{Tmax)}
+\NormalTok{  u}\OtherTok{=}\FunctionTok{runif}\NormalTok{(n,}\DecValTok{0}\NormalTok{,Tmax)}
+\NormalTok{  p}\OtherTok{=}\FunctionTok{sort}\NormalTok{(u)}
+  \FunctionTok{return}\NormalTok{(p)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+Simulation d'un processus de poisson inhomogène :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{simulPPi }\OtherTok{=} \ControlFlowTok{function}\NormalTok{(lambda\_fct,Tmax,M)}
+\NormalTok{\{n}\OtherTok{=}\FunctionTok{cumsum}\NormalTok{(}\FunctionTok{lambda\_fct}\NormalTok{(}\DecValTok{0}\SpecialCharTok{:}\NormalTok{Tmax))}
+\NormalTok{  t}\OtherTok{=} \FunctionTok{simulPPh1}\NormalTok{(M,Tmax)}
+\NormalTok{  y}\OtherTok{=}\FunctionTok{runif}\NormalTok{(t,}\DecValTok{0}\NormalTok{,M)}
+\NormalTok{  t[y}\SpecialCharTok{\textless{}=}\FunctionTok{lambda\_fct}\NormalTok{(t)]}
+  \FunctionTok{return}\NormalTok{(t)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+Let us define a plot function for a counting process \texttt{PP}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{plot.PP}\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(PP)}
+\NormalTok{\{}
+  \CommentTok{\# plot the counting process (with jumps of size 1 (starting at point (0,0))):}
+  \FunctionTok{plot}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,PP),}\DecValTok{0}\SpecialCharTok{:}\FunctionTok{length}\NormalTok{(PP),}\AttributeTok{type=}\StringTok{"s"}\NormalTok{,}\AttributeTok{xlab=}\StringTok{"time t"}\NormalTok{,}\AttributeTok{ylab=}\StringTok{"number of events by time t"}\NormalTok{)}
+  \CommentTok{\# add the arrival times on the horizontal axis: }
+  \FunctionTok{points}\NormalTok{(PP,}\DecValTok{0}\SpecialCharTok{*}\NormalTok{PP,}\AttributeTok{type=}\StringTok{"p"}\NormalTok{,}\AttributeTok{pch=}\DecValTok{16}\NormalTok{)}
+  \CommentTok{\# link arrival times with the counts:}
+  \FunctionTok{lines}\NormalTok{(PP,}\DecValTok{0}\SpecialCharTok{:}\NormalTok{(}\FunctionTok{length}\NormalTok{(PP)}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{),}\AttributeTok{type=}\StringTok{"h"}\NormalTok{,}\AttributeTok{lty=}\DecValTok{2}\NormalTok{)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Tmax}\OtherTok{=}\DecValTok{1000}
+\NormalTok{alpha }\OtherTok{=} \DecValTok{1}
+\NormalTok{beta}\OtherTok{=} \DecValTok{1}
+\NormalTok{lambda\_fct }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(x)\{}\FunctionTok{return}\NormalTok{(alpha}\SpecialCharTok{/}\NormalTok{beta}\SpecialCharTok{*}\NormalTok{(x}\SpecialCharTok{/}\NormalTok{alpha)}\SpecialCharTok{\^{}}\NormalTok{(beta}\DecValTok{{-}1}\NormalTok{))\}}
+\NormalTok{M1}\OtherTok{=}\DecValTok{10}
+\NormalTok{PPi1 }\OtherTok{=} \FunctionTok{simulPPi}\NormalTok{(lambda\_fct,Tmax,M1)}
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mfrow=}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{))}
+\FunctionTok{curve}\NormalTok{(lambda\_fct,}\AttributeTok{from=}\DecValTok{0}\NormalTok{,}\AttributeTok{to=}\NormalTok{Tmax,}\AttributeTok{n=}\DecValTok{1000}\NormalTok{)}
+\FunctionTok{plot.PP}\NormalTok{(PPi1)}
+\end{Highlighting}
+\end{Shaded}
+
+\#\#estimateurs de alpha et beta MLE
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#estimalpha=T*exp({-}1/beta*log(simulPPi()))}
+
+\CommentTok{\#il y a un message d\textquotesingle{}erreur car il manque les arguement dans la fonction simulPPi}
+\end{Highlighting}
+\end{Shaded}
+
+
+\end{document}

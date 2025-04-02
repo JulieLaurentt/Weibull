@@ -2,41 +2,146 @@
 title: "Power Law"
 author: "Berrie, Michel, Galuppini, Laurent"
 date: "2025-03-07"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
 ---
-#Résultats théoriques
+## 1. Résultats théoriques : 
+
+\
+
+On étudie le processus de Weibull (power law process dans la terminologie américaine). C'est un processus de Poisson d'intensité : $\lambda(s)=\frac{\beta}{\alpha}(\frac{s}{\alpha})^{\beta-1}$ où les paramètres $\alpha$ et $\beta$ sont inconnus. 
+
+\
 
 
-On étudie le processus de Weibull (power law process dans la terminologie américaine). C'est un processus de Poisson d'intensité : $\lambda(s)=\frac{\beta}{\alpha}(\frac{s}{\alpha})^{\beta-1}$ où les paramètres $\alpha$ et $\beta$ sont inconnus.
+#### 1. 1 Estimateurs des paramètres inconnus :
+\
+
 
 Nous allons estimer les paramètres $\alpha$ et $\beta$ par leurs estimateurs de maximum vraisemblance (MLE), $\hat{\alpha}$ et $\hat{\beta}$.
 
- on note  $\hat {\theta}$=($\hat{\alpha}$,$\hat{\beta}$.)
- 
- $\hat{\theta} \in \arg\max_{\theta \in \mathbb{R}^+}  L(N,\theta)$
+\
+
+Dans un premier temps nous allons calculer $L(N,\theta)$ tel que :
+
+On note  $\hat {\theta}$=($\hat{\alpha}$,$\hat{\beta}$.), $\hat{\theta} \in \arg\max_{\theta \in \mathbb{R}^+}  L(N,\theta)$
  
 
-D'après la proposition 4.14 du cours, la vraisemblance vaut :
+D'après la proposition 4.14 du cours, la vraisemblance vaut dans le cas d'un processus inhomogène :
+
 $L((N_t)_{t \in[0,T]; \theta})$ = $\left( \prod_{i=1}^{N_t}\lambda(T_i) \right) \exp \left(-\int_0^T \lambda(x)dx \right)$
 
-On remplace $\lambda$ par la fonction du Weibull.
+On remplace $\lambda$ par la fonction du Weibull ainsi :
 
+$L((N_t)_{t \in[0,T]; \theta})$=$\left(\prod_{i=1}^{N_t}\frac{\beta}{\alpha}(\frac{T_i}{\alpha})^{\beta-1} \right) \exp(\frac{T}{\alpha})^{\beta}$
 
-écrire l integrale de la feuille d'ema 
+puisque en effet :
 
+$\left(-\int_0^T \lambda(x)dx \right)$=$\left(-\int_0^T \frac{\beta}{\alpha}(\frac{x}{\alpha})^{\beta-1}dx \right)$
+                                      =$\frac{-\beta}{\alpha}\frac{1}{\alpha^{\beta-1}}\left[ \frac{1}{\beta}x^{\beta} \right]_0^T$
+                                      =$(\frac{T}{\alpha})^{\beta}$
 
-Nous passons au log pour calculer la logvraisemblance :
+\
+
+Nous passons au log pour calculer la logvraisemblance (nous travaillons sur R+) afin de passer d'un produit à une somme et de nous faciliter les prochains calculs:
+=> justifier que on travail sur R+
 
 $l((N_t)_{t \in[0,T]; \theta})=log(L((N_t)_{t \in[0,T]; \theta}))$ = $N_t((log(\beta)-\beta log(\alpha))+ (\beta-1) \sum_{i=1}^{N_t}log(T_i)-(\frac{t}{\alpha})^\beta$
 
-Nous allons calculer le gradient de la logvraisemblance pour trouver les estimateurs qui maximisent la log vraisemblance
-$\nabla$
-gradient, hessienne locale pour verifier la concavité
-##Goodness of fit test
-si il reste du temps
+\
+
+Ensuite nous allons calculer le gradient de la logvraisemblance pour trouver les estimateurs qui maximisent la log vraisemblance. 
+
+$$\nabla l =
+\begin{bmatrix}\frac{\partial l}{\partial \alpha} \\\frac{\partial l}{\partial \beta}\end{bmatrix}=
+\begin{bmatrix}\frac{-\beta}{\alpha} N_t + \beta\frac{1}{\alpha}(\frac{T}{\alpha})^{\beta}\\N_t((\frac{1}{\beta}- log(\alpha))+ \sum_{i=1}^{N_t}log(T_i)-log(\frac{T}{\alpha})exp(\beta\log(\frac{T}{\alpha})) \end{bmatrix}$$
+
+Dans notre cas, on cherche à trouver le point où le gradient s'annule (présence de maximum ou de minimum) ainsi $\nabla l=0$ soit :
 
 
-#Résultats numériques 
+$$\begin{bmatrix}log(\frac{\beta}{\alpha}(\frac{T}{\alpha})^{\beta}) = log(\frac{\beta}{\alpha}N_t) ^{*}\\\frac{1}{\beta} = log(\alpha) -\frac{1}{N_t} \sum_{i=1}^{N_t}log(T_i) + \frac{1}{N_t}log(\frac{T}{\alpha})exp(\beta\log(\frac{T}{\alpha})) \end{bmatrix}$$
+
+or d'après * on peut en déduire que :
+
+$log(\beta)-log(\alpha) +{\beta}log(\frac{T}{\alpha}) = log(\beta) -log(\alpha) +log(N_t)$
+\
+${\beta}log(\frac{T}{\alpha}) = log(N_t)$ 
+
+ainsi :
+
+$$\begin{bmatrix}log(\alpha) = log(T) -\frac{1}{\beta}log(N_t)\\\frac{1}{\beta} = log(\alpha) -\frac{1}{N_t} \sum_{i=1}^{N_t}log(T_i) + \frac{1}{N_t}log(\frac{T}{\alpha})exp(log(N_t)) \end{bmatrix}$$
+et finalement :
+
+$$\begin{bmatrix}log(\alpha) = log(T) -\frac{1}{\beta}log(N_t)\\\frac{1}{\beta} = log(T) -\frac{1}{N_t} \sum_{i=1}^{N_t}log(T_i) \end{bmatrix}$$
+
+De plus, pour vérifier que nous sommes bien sur un maximum (vérification de la concavité) nous allons analyser le signe de la Hessienne localement en ce point en partant de $\nabla l$ calculé plus haut :
+
+Premièrement calculons les dérivées partielles de notre gradiant (donc les dérivées secondes) :
+
+$$\begin{bmatrix} \frac{\partial^2 l}{\partial \alpha^2} = \frac{\beta}{\alpha^2}N_t - \frac{\beta}{\alpha^2}(\frac{T}{\alpha})^\beta - \frac{\beta^2}{\alpha^2}(\frac{T}{\alpha})^\beta
+\\\frac{\partial^2 l}{\partial \alpha \partial \beta} =-\frac{N_t}{\alpha} +\frac{1}{\alpha}exp(\beta\log(\frac{T}{\alpha})) + \frac{\beta}{\alpha}\log(\frac{T}{\alpha})exp(\beta\log(\frac{T}{\alpha}))
+\\\frac{\partial^2 l}{\partial \beta^2}= -\frac{N_t}{\beta^2} - log(\frac{T}{\alpha})^2exp(\beta\log(\frac{T}{\alpha}))
+\\\frac{\partial^2 l}{\partial \beta \partial \alpha}=-\frac{N_t}{\alpha} +\frac{1}{\alpha}exp(\beta\log(\frac{T}{\alpha})) + \frac{\beta}{\alpha}\log(\frac{T}{\alpha})exp(\beta\log(\frac{T}{\alpha}))
+\end{bmatrix}$$
+
+Or localement on a pour rappel :
+
+$$ \frac{\partial l}{\partial \alpha}=0$$ donc $$\frac{-\beta}{\alpha} N_t + \beta\frac{1}{\alpha}(\frac{T}{\alpha})^{\beta}=0$$ ainsi $$(\frac{T}{\alpha})^{\beta}=N_t$$
+d'où : $$exp(\beta\log(\frac{T}{\alpha}))=(\frac{T}{\alpha})^\beta=N_t$$
+
+Ce qui nous permet de dire que localement, (sachant $N_t>0$) :
+
+$$\frac{\partial^2 l}{\partial \alpha^2} = \frac{\beta}{\alpha^2}N_t - \frac{\beta}{\alpha^2}N_t - \frac{\beta^2}{\alpha^2}N_t=- \frac{\beta^2}{\alpha^2}N_t<0$$
+$$\frac{\partial^2 l}{\partial \beta^2} = -\frac{N_t}{\beta^2} - N_t\log(\frac{T}{\alpha})^2 <0$$
+
+On remarque que $\frac{\partial^2 l}{\partial \alpha^2}$ et $\frac{\partial^2 l}{\partial \beta^2}$ sont toutes deux négatives or pour rappel :
+
+$$
+\text{Tr}(H) = \frac{\partial^2 f}{\partial \alpha^2} + \frac{\partial^2 f}{\partial \beta^2}
+$$
+ainsi $\text{Tr}(H(\hat{\alpha}, \hat{\beta})) <0$ ce qui signifie que la somme des valeurs propre de $H(\hat{\alpha}, \hat{\beta})$ est négative. 
+
+De plus on a pour rappel : $$
+\det(H) = \frac{\partial^2 f}{\partial \alpha^2} \cdot \frac{\partial^2 f}{\partial \beta^2}
+- \left(\frac{\partial^2 f}{\partial \alpha \partial \beta}\right)^2
+$$
+ainsi :
+
+$$
+\det(H(\hat{\alpha}, \hat{\beta})) =
+\left. \frac{\partial^2 f}{\partial \alpha^2} \right|_{\alpha = \hat{\alpha}, \beta = \hat{\beta}}
+\cdot
+\left. \frac{\partial^2 f}{\partial \beta^2} \right|_{\alpha = \hat{\alpha}, \beta = \hat{\beta}}
+- \left( \left. \frac{\partial^2 f}{\partial \alpha \partial \beta} \right|_{\alpha = \hat{\alpha}, \beta = \hat{\beta}} \right)^2
+=\frac{1}{\alpha^2}N_t^2+\frac{\beta^2}{\alpha^2}N_t^2log(\frac{T}{\alpha})^2-\frac{\beta^2}{\alpha^2}N_t^2log(\frac{T}{\alpha})^2=\frac{N_t^2}{\alpha^2}>0
+$$
+
+Ainsi $ \det(H(\hat{\alpha}, \hat{\beta}))>0$ ce qui signifie que le produit des valeurs propre de $H(\hat{\alpha}, \hat{\beta})$ est positif. 
+
+Nous pouvons donc en déduire que les valeurs propres de $H(\hat{\alpha}, \hat{\beta})$ sont toutes négatives ce qui siginifie que localement nous nous trouvons sur un maximum. 
+
+
+Finalement on a bien  $\hat{\theta} \in \arg\max_{\theta \in \mathbb{R}^+}  L(N,\theta)$ et nos estimateurs sont bien des estimateurs de maximum vraisemblance.
+
+Ces estimateurs vont nous permettre de travailler ensuite sur la construction d'intervalle de confiance de nos paramètres inconnus.
+
+C'est ce que nous allons faire ci-dessous.
+
+\
+
+
+#### 1. 2. Intervalle de confiance et loi :
+\
+
+=> César et Florian
+
+\
+
+
+## 2. Résultats numériques : 
+
+\
 
 Second, the students are asked to perform numerical simulations in order to validate, from a practical point of view, the confidence intervals presented in [Cocozza-Thivent, 1997], 
 
@@ -91,7 +196,10 @@ plot.PP(PPi1)
  MLE
  
 ```{r}
-estimalpha=T*exp(-1/beta*ln(simulPPi()))
+
+#estimalpha=T*exp(-1/beta*log(simulPPi()))
+
+#il y a un message d'erreur car il manque les arguement dans la fonction simulPPi
   
 ```
  
