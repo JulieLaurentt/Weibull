@@ -132,7 +132,7 @@ C'est ce que nous allons faire ci-dessous.
 \
 
 
-#### 1. 2. Intervalle de confiance et loi :
+#### 1. 2. Intervalle de confiance et loi : 
 \
 
 => César et Florian
@@ -181,7 +181,7 @@ $$ \mathbb{P} \bigg(\hat\alpha ~exp\bigg(\frac{-log(t)} {\sqrt{N(t)}} n_{\frac{1
 
 Ainsi 
 
-$$\bigg[\hat\alpha ~exp\bigg(\frac{-log(t)} {\sqrt{N(t)}} n_{\frac{1+\gamma}{2}}\bigg) ,\hat\alpha ~exp\bigg(\frac{-log(t)} {\sqrt{N(t)}} n_{\frac{1+\gamma}{2}}\bigg) \bigg]  $$ est un intervalle de confiance bilatéral asymptotique pour alpha.
+$$IC_\gamma(\alpha)=\bigg[\hat\alpha ~exp\bigg(\frac{-log(t)} {\sqrt{N(t)}} n_{\frac{1+\gamma}{2}}\bigg) ,\hat\alpha ~exp\bigg(\frac{-log(t)} {\sqrt{N(t)}} n_{\frac{1+\gamma}{2}}\bigg) \bigg]  $$ est un intervalle de confiance bilatéral asymptotique pour alpha.
 
 
 Pour $\beta$ :
