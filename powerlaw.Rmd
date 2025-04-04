@@ -5,6 +5,7 @@ date: "2025-03-07"
 output:
   html_document:
     df_print: paged
+  pdf_document: default
 ---
 # 1. Résultats théoriques : 
 
@@ -118,7 +119,7 @@ $$
 =\frac{1}{\alpha^2}N_t^2+\frac{\beta^2}{\alpha^2}N_t^2log(\frac{T}{\alpha})^2-\frac{\beta^2}{\alpha^2}N_t^2log(\frac{T}{\alpha})^2=\frac{N_t^2}{\alpha^2}>0
 $$
 
-Ainsi $ \det(H(\hat{\alpha}, \hat{\beta}))>0$ ce qui signifie que le produit des valeurs propre de $H(\hat{\alpha}, \hat{\beta})$ est positif. 
+Ainsi $\det(H(\hat{\alpha}, \hat{\beta}))>0$ ce qui signifie que le produit des valeurs propre de $H(\hat{\alpha}, \hat{\beta})$ est positif. 
 
 Nous pouvons donc en déduire que les valeurs propres de $H(\hat{\alpha}, \hat{\beta})$ sont toutes négatives ce qui siginifie que localement nous nous trouvons sur un maximum. 
 
@@ -154,7 +155,7 @@ d’une fonction de $Y$ puis utiliser un changement de variable dans l’intégr
    $$
    \mathbb{E}[\phi(Y)]
    \;=\;
-   \int_{0}^{\infty} \phi\Bigl(\tfrac{2}{\beta}x\Bigr)\;f_X(x)\;\mathrm{d}x.
+   \int_{-\infty}^{\infty} \phi\Bigl(\tfrac{2}{\beta}x\Bigr)\;f_X(x)\;\mathrm{d}x.
    $$
    Or 
    $$
@@ -249,7 +250,7 @@ d’une fonction de $Y$ puis utiliser un changement de variable dans l’intégr
    Y = \frac{2}{\beta}\,X \;\sim\;\Gamma\bigl(n,2\bigr).
    $$
 
-5. **Remarque**  
+
    Puisque $\Gamma(n,2)$ est une $\chi^2$ à $2n$ degrés de liberté, on peut 
    également écrire :
    $$
@@ -451,8 +452,6 @@ Ce qui conclut la preuve.
 ## 1. 3. Intervalle de confiance : 
 \
 
-=> César et Florian
-
 Nous avons donc  $$ \frac{2n\beta}{\hat{\beta}} $$ suivant une loi de khi deux à $2n$ degrès de liberté, $\chi^2(2n)$.
 
 Construisons l'intervalle de confiance bilatéral de niveau $\gamma$ sur $\beta$ associé.
@@ -471,15 +470,33 @@ Partie de cesar et florian ?
 
 Nous allons désormais nous interesser au comportement asymptotique des estimateurs $\hat\beta$ et $\hat\alpha$, soit lorsque $t$ tend vers l'infini.
 
-Lorsque  t tend vers l'infini, les variables aléatoires suivantes convergent en loi vers une loi normale centrée réduite, $\mathcal{N} (0,1)$ : 
+Lorsque  t tend vers l'infini, on admet que les variables aléatoires suivantes convergent en loi vers une loi normale centrée réduite, $\mathcal{N} (0,1)$ : 
+
+Pour \(\alpha\) :
+$$
+\frac{\sqrt{\Lambda(t)}}{\log(t)}\log\left(\frac{\hat\alpha}{\alpha}\right) \quad (1)
+$$
+$$
+\frac{\sqrt{\Lambda(t)}}{\log(t)}\left(\frac{\hat\alpha}{\alpha}-1\right) \quad (2)
+$$
+
+Pour \(\beta\) :
+$$
+\sqrt{\Lambda(t)}\left(\frac{\hat\beta}{\beta}-1\right) \quad (3)
+$$
+$$
+\sqrt{\Lambda(t)}\left(\frac{\beta}{\hat\beta}-1\right) \quad (4)
+$$
+
+On va maintenat appliquer Le théorème de Slutsky pour obtenir nos statistiques pivotales.
 
 Pour $\alpha$ :
-$$ \frac{\sqrt{N(t)}}{log(t)}log(\frac{\hat\alpha}{\alpha}) $$  (1)
-$$ \frac{\sqrt{N(t)}}{log(t)}(\frac{\hat\alpha}{\alpha}-1) $$  (2)
+$$ \frac{\sqrt{N(t)}}{log(t)}log(\frac{\hat\alpha}{\alpha}) \quad (1)$$
+$$ \frac{\sqrt{N(t)}}{log(t)}(\frac{\hat\alpha}{\alpha}-1) \quad (2)$$
 
 pour $\beta$ : 
-$$ \sqrt{N(t)}(\frac{\hat\beta}{\beta}-1) $$ (3)
-$$ \sqrt{N(t)}(\frac{\beta}{\hat\beta}-1) $$ (4)
+$$ \sqrt{N(t)}(\frac{\hat\beta}{\beta}-1) \quad (3)$$
+$$ \sqrt{N(t)}(\frac{\beta}{\hat\beta}-1) \quad (4)$$
 
 Construisons les intervalles de confiance asymptotiques bilatéraux associés.
 
@@ -509,7 +526,99 @@ $$ \mathbb{P} \bigg(n_{(1- \gamma) /2}<\sqrt{N(t)}(\frac{\hat\beta}{\beta}-1)<n_
 
 Ainsi lorsque t tend vers $+\infty$
 $$IC_\gamma(\beta)=\bigg[\hat\beta(1-\frac{n_{(1- \gamma) /2}}{\sqrt{N(t)}}), \hat\beta(1+\frac{n_{(1- \gamma) /2}}{\sqrt{N(t)}})\bigg]$$
+### Godness of fit test
 
+Le but de cette partie est de pouvoir construire un test pour vérifier qu'un échantillon est bien issu d'un Weibull Process.
+
+Nous allons nous baser sur le théorème 1 du document Moller-1976. Le thoérème est le suivant:
+
+#### Théorème de Moeller (1976)
+
+
+Pour tout \( n > 2 \), le vecteur stochastique 
+
+$$
+(-\ln ( W_{n-1}/ W_n), -\ln ( W_{n-2}/ W_n), \dots, -\ln ( W_1/W_n))
+$$
+
+suit la même loi que $n - 1$ observations ordonnées indépendantes d'une distribution exponentielle de paramètre $\gamma^{-1}$ si et seulement si les événements enregistrés proviennent d'un processus Rasch-Weibull avec un paramètre de tendance $\gamma$. Où les variables $W_1, W_2, \dots, W_n$ représentent les temps d'arrivée.
+
+
+#### Construction du test
+
+Soit un échantillon d'observations de temps d'arrivée indépendants $W_1, W_2, \dots, W_n$.
+
+Appliquons la transformation suviante aux $W_i$ et notons  $Z_i$ cette transformation:
+
+$$
+Z_i = -\ln \left( \frac{W_i}{W_n} \right), \quad i = 1, 2, \dots, n-1.
+$$
+
+Nous ordonnons les $Z_i$ et par construction nous pouvons supposer que les $Z_i$ sont indépendants.
+
+
+Dans notre cas, nous souhaitons tester si notre échantillon provient d'une loi exponentielle paramètre $\gamma^{-1}$., mais le paramètre de cette distribution  n’est pas connu  et doit être estimé directement à partir des données observées. 
+
+Le test classique de Kolmogorov-Smirnov repose sur l'hypothèse d'une distribution complètement spécifiée, où tous les paramètres sont connus préalablement. Or, indiqué dans la référence Lilliefors (1969), l’estimation du paramètre à partir de l'échantillon testé affecte significativement la distribution théorique de la statistique de test, rendant les seuils critiques standards non valides.
+
+Pour pallier ce problème, nous optons pour le test Lilliefors-corrected Kolmogorov-Smirnov, parfait pour ajuster la statistique de test dans ce contexte. Cette correction garantit une meilleure validité statistique, en maintenant des niveaux de significativité corrects lorsque le paramètre de la loi exponentielle est estimé sur le même jeu de données soumis au test.
+
+D'abord nous supposons que l'échantillon $W_1, W_2, \dots, W_n$ est iid et de fonction de répartition continue.
+
+#### Hypothèses
+
+$$
+H_0 : \not\exists \gamma \quad \text{tel que} \quad Z_i \sim \text{Exp}(\gamma^{-1}) \quad \text{avec} \quad  \gamma \quad \text{inconnu}
+$$
+
+$$
+H_1 : \forall \gamma, \quad Z_i\not\sim \text{Exp}(\gamma^{-1}) 
+$$
+
+D'après la même réference le test Lilliefors-corrected Kolmogorov-Smirnov estime le paramètre $ \gamma$ par l'estimateur du maxium de vraisemblance:
+
+$$
+\gamma_{\text{MLE}} = \frac{n-1}{\sum_{i=1}^{n-1} Z_i} = \frac{n-1}{\sum_{i=1}^{n-1} -\ln \left( \frac{W_i}{W_n} \right)}
+$$
+
+De plus, on note $\hat{F}_n$ la fonction de répartition empirique de l'échantillon $W_1, W_2, \dots, W_n$ que nous observons.   
+
+$W_1, W_2, \dots, W_n \overset{\text{i.i.d.}}{\sim} F$
+
+Pour tout $x \in \mathbb{R}$, elle est définie par :
+
+$$
+\hat{F}_n(x) = \frac{1}{n} \sum_{i=1}^{n} \mathbb{1} \{ Z_i \leq x \}
+$$
+
+$F_0(x)$ est la fonction de répartition théorique de la loi exponentielle de paramètre inconnu $\gamma^{-1}$.
+
+Soit $$
+F_0(x) =
+\begin{cases} 
+0, & \text{si } x < 0 \\
+1 - e^{-\gamma^{-1} x}, & \text{si } x \geq 0
+\end{cases}
+$$
+
+La statistique du test de Kolmogorov-Smirnov est définie par :
+
+$$
+D_n = \sup_{x \in \mathbb{R}} \left| \hat{F}_n(x) - F_{\gamma_{\text{MLE}}}(x) \right|.
+$$
+
+Sous l'hypothèse $H_0$, $D_n$ est indépendant de F et est tabulée. On rejettera $H_0$ dès lors que l'écart entre $F_n(x)$ et $F_0(x)$ est significativement grand. Nous obtenons donc la zone de rejet suviante:
+
+$$ R_\alpha = \left\{ D_n \geq d_{1-\alpha} \right\}  $$ 
+où $d_{1-\alpha}$ est le 1-$\alpha$ quantile de $D_n$
+
+
+Dans le cas où nous acceptons $H_0$, d'après le théorème nous savons que les temps d'arrêts de notre échantillon suivent une répartition de Weibull de tendance $\gamma$.
+
+Dans la partie suivante nous allons illustrer la réalisation de ce test avec le jeu de données fournies.
+Ce jeu de données représente les intervalles entres pannes de l'air conditionné dans une flotte d'avions Boeing 720.
+
+Nous considérons donc ici notre échantillon comme étant la temps où la panne intervient. Il faut légerement modifier le jeu de données pour non plus avoir l'intervalle entre les pannes mais les différents temps d'occurence des pannes.
  
 
 ## 2. Résultats numériques : 
@@ -577,9 +686,86 @@ plot.PP(PPi1)
   
 ```
  
+```{r}
+library(KScorrect)
+library(readxl)
+df <- read_excel("data.xlsx",sheet = 1)
+head(df)  
+```
+Pour pouvoir faire un test Lilliefors-corrected Kolmogorov-Smirnov il faut avoir un échantillon iid de loi continue. 
+
+On suppose alors que lorsqu'une panne intervient, cela n'impacte pas le temps des nouvelles pannes suivantes.
+
+Suivons le plan du test construit dans la partie thoérique.
 
 
+Commençons par transformer les échantillons en calculant le vecteur Z pour l'avion 7907:
+```{r}
+W <- df[[1]]  
+W <- na.omit(W)
+# Supprime les valeurs NA
+W_n <- tail(W, 1)
+Z <- -log(W[1:(length(W) - 1)] / W_n)
+Z <- sort(Z)
+print(W)
+```
+Maintenant nous pouvons effectuer le test de Lilliefors-corrected Kolmogorov-Smirnov pour vérifier si notre échantillon est bien distribué selon une loi exponentielle
+```{r}
+LcKS_result <- LcKS(Z, "pexp")
+cat("Statistique D de Kolmogorov-Smirnov :", LcKS_result$D.obs, "\n")  
+cat("P-valeur :", LcKS_result$p.value, "\n") 
 
+```
+D'après le résultat on obtient une p-valeur de 0.0852 soit supérieur à 0.05. Au niveau 5% nous ne rejetons pas l'hyptohèse nulle soit que l'échantillon suit une loi exponentielle. En revanche la p-valeur est très proche de 0.05 cela est probablement dû au peu de données dans cet échantillon (seulement 7).
+
+D'après le théorème la partie théorique  nous pouvons modéliser le processus de comptage de panne de l'air conditionné de l'avion 7907 par un processus de Weibull de paramètre de tendance $ \gamma  =  0.6008705 $ 
+
+Il nous reste plus qu'à donner l'intervalle de confiance pour les paramètres.
+
+Nous pouvons répéter la même opération pour les autres avions de la flotte:
+```{r}
+for (i in 1:ncol(df)) {
+  
+  avion_id <- colnames(df)[i]  # Nom de l'avion correspondant
+  
+  # Extraction et nettoyage des données
+  W_avion <- df[[i]]
+  
+  W_avion <- na.omit(W_avion) 
+  
+  if (length(W_avion) > 1) {  
+    W_n_avion <- tail(W_avion, 1)
+    Z_avion <- -log(W_avion[1:(length(W_avion) - 1)] / W_n_avion)
+    Z_avion <- sort(Z_avion)
+    
+    # Estimation du paramètre gamma
+    g_avion <- 1 / mean(Z_avion)
+    
+    # Test de Lilliefors-corrected Kolmogorov-Smirnov
+    LcKS_result_avion <- LcKS(Z_avion, "pexp")
+    
+      
+      # Affichage des résultats sous forme de bloc
+      cat("\n======================================\n")
+      cat("Résultats pour l'avion", avion_id, "\n")
+      cat("--------------------------------------\n")
+      cat("Paramètre gamma estimé :", g_avion, "\n")
+      cat("Statistique D de Kolmogorov-Smirnov :", LcKS_result_avion$statistic, "\n")  
+      cat("P-valeur :", LcKS_result_avion$p.value, "\n") 
+      cat("======================================\n\n")
+    } else {
+      cat("\n======================================\n")
+      cat("L'avion", avion_id, "ne contient pas assez de données exploitables.\n")
+      cat("======================================\n\n")
+    }
+  }
+```
+
+De manière analogue à l'avion B7907 nous pouvons modéliser le processus de comptage de panne de l'air conditionné de tous les avions par un processus de Weibull de paramètre de tendance égal au gamma estimé.
+
+En revanche pour les avions B8044 B7917 B7912 B7908 B7907 la p-valeur reste proche de 0.05 probablement dû au fait que il n'y a pas beaucoup de données sur ces échantillons.
+
+Nous allons donc déterminer les intervalles de confiance pour les autres avions ( B7909 B7910 B7911 B7913 B7914 B7915 B7916 B8045).
 
 
 
