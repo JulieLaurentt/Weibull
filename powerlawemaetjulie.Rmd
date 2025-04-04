@@ -299,6 +299,33 @@ plot(Tillustr,MLEbeta,xlab="Tmax",ylab="MLEbeta")
 abline(h=beta,col="red",lwd=beta)
 ```
 
+ 
+```{r}
+testintervallesalpha <- function(PPi, MLE_alpha, alpha) {
+  z <- qnorm(0.975)
+  inside <- logical(length(MLE_alpha))
+  for (i in seq_along(MLE_alpha)) {
+    N=i
+    t_i <- PPi[i]  # on prend le t correspondant à alpha
+    inside[i] <- (MLE_alpha[i] * exp(-log(t_i) / sqrt(N) * z)< MLE_alpha[i] && MLE_alpha[i] * exp(log(t_i) / sqrt(N) * z> MLE_alpha[i]))
+  }
+  return(mean(inside))
+}
+
+testintervallesbeta <- function(PPi, MLE_beta, beta) {
+  z <- qnorm(0.975)
+  inside <- logical(length(MLE_beta))
+  for (i in seq_along(MLE_beta)) {
+    N=i
+    t_i <- PPi[i]  # on prend le t correspondant à beta
+    inside[i] <- (MLE_beta[i] * (1 - z / sqrt(N)) < beta && MLE_beta[i] * (1 + z / sqrt(N)) > beta) 
+  }
+  return(mean(inside))
+}
+```
+
+
+
 
 
 
