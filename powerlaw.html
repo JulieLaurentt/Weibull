@@ -1628,8 +1628,8 @@ display: none;
 </div>
 
 
-<div id="résultats-théoriques" class="section level2">
-<h2>1. Résultats théoriques :</h2>
+<div id="résultats-théoriques" class="section level1">
+<h1>1. Résultats théoriques :</h1>
 <p><br />
 </p>
 <p>On étudie le processus de Weibull (power law process dans la
@@ -1638,8 +1638,8 @@ terminologie américaine). C’est un processus de Poisson d’intensité :
 où les paramètres <span class="math inline">\(\alpha\)</span> et <span class="math inline">\(\beta\)</span> sont inconnus.</p>
 <p><br />
 </p>
-<div id="estimateurs-des-paramètres-inconnus" class="section level4">
-<h4>1. 1 Estimateurs des paramètres inconnus :</h4>
+<div id="estimateurs-des-paramètres-inconnus" class="section level2">
+<h2>1. 1 Estimateurs des paramètres inconnus :</h2>
 <p><br />
 </p>
 <p>Nous allons estimer les paramètres <span class="math inline">\(\alpha\)</span> et <span class="math inline">\(\beta\)</span> par leurs estimateurs de maximum
@@ -1649,7 +1649,7 @@ et <span class="math inline">\(\hat{\beta}\)</span>.</p>
 </p>
 <p>Dans un premier temps nous allons calculer <span class="math inline">\(L(N,\theta)\)</span> tel que :</p>
 <p>On note <span class="math inline">\(\hat {\theta}\)</span>=(<span class="math inline">\(\hat{\alpha}\)</span>,<span class="math inline">\(\hat{\beta}\)</span>.), <span class="math inline">\(\hat{\theta} \in \arg\max_{\theta \in
-\mathbb{R}^+}  L(N,\theta)\)</span></p>
+\mathbb{R}^+} L(N,\theta)\)</span></p>
 <p>D’après la proposition 4.14 du cours, la vraisemblance vaut dans le
 cas d’un processus inhomogène :</p>
 <p><span class="math inline">\(L((N_t)_{t \in[0,T]; \theta})\)</span> =
@@ -1677,7 +1677,7 @@ R+</p>
 \sum_{i=1}^{N_t}log(T_i)-(\frac{t}{\alpha})^\beta\)</span></p>
 <p><br />
 </p>
-<p>Ensuite nous allons calculer le gradient de la logvraisemblance pour
+<p>Ensuite nous calculons le gradient de la logvraisemblance pour
 trouver les estimateurs qui maximisent la log vraisemblance.</p>
 <p><span class="math display">\[\nabla l =
 \begin{bmatrix}\frac{\partial l}{\partial \alpha} \\\frac{\partial
@@ -1732,9 +1732,13 @@ log(\frac{T}{\alpha})^2exp(\beta\log(\frac{T}{\alpha}))
 <p><span class="math display">\[ \frac{\partial l}{\partial
 \alpha}=0\]</span> donc <span class="math display">\[\frac{-\beta}{\alpha} N_t +
 \beta\frac{1}{\alpha}(\frac{T}{\alpha})^{\beta}=0\]</span> ainsi <span class="math display">\[(\frac{T}{\alpha})^{\beta}=N_t\]</span> d’où :
-<span class="math inline">\(exp(\beta\log(\frac{T}{\alpha}))=(\frac{T}{\alpha})^\beta=N_t\)</span></p>
+<span class="math display">\[exp(\beta\log(\frac{T}{\alpha}))=(\frac{T}{\alpha})^\beta=N_t\]</span></p>
 <p>Ce qui nous permet de dire que localement, (sachant <span class="math inline">\(N_t&gt;0\)</span>) :</p>
-<p>=&gt; simplifier toutes les dérivées partielles secondes</p>
+<p><span class="math display">\[\frac{\partial^2 l}{\partial \alpha^2} =
+\frac{\beta}{\alpha^2}N_t - \frac{\beta}{\alpha^2}N_t -
+\frac{\beta^2}{\alpha^2}N_t=- \frac{\beta^2}{\alpha^2}N_t&lt;0\]</span>
+<span class="math display">\[\frac{\partial^2 l}{\partial \beta^2} =
+-\frac{N_t}{\beta^2} - N_t\log(\frac{T}{\alpha})^2 &lt;0\]</span></p>
 <p>On remarque que <span class="math inline">\(\frac{\partial^2
 l}{\partial \alpha^2}\)</span> et <span class="math inline">\(\frac{\partial^2 l}{\partial \beta^2}\)</span>
 sont toutes deux négatives or pour rappel :</p>
@@ -1745,11 +1749,12 @@ f}{\partial \beta^2}
 \hat{\beta})) &lt;0\)</span> ce qui signifie que la somme des valeurs
 propre de <span class="math inline">\(H(\hat{\alpha},
 \hat{\beta})\)</span> est négative.</p>
-<p>De plus on a pour rappel <span class="math display">\[
+<p>De plus on a pour rappel : <span class="math display">\[
 \det(H) = \frac{\partial^2 f}{\partial \alpha^2} \cdot \frac{\partial^2
 f}{\partial \beta^2}
 - \left(\frac{\partial^2 f}{\partial \alpha \partial \beta}\right)^2
-\]</span> ainsi :</p>
+\]</span></p>
+<p>ainsi :</p>
 <p><span class="math display">\[
 \det(H(\hat{\alpha}, \hat{\beta})) =
 \left. \frac{\partial^2 f}{\partial \alpha^2} \right|_{\alpha =
@@ -1768,7 +1773,7 @@ propre de <span class="math inline">\(H(\hat{\alpha},
 négatives ce qui siginifie que localement nous nous trouvons sur un
 maximum.</p>
 <p>Finalement on a bien <span class="math inline">\(\hat{\theta} \in
-\arg\max_{\theta \in \mathbb{R}^+}  L(N,\theta)\)</span> et nos
+\arg\max_{\theta \in \mathbb{R}^+} L(N,\theta)\)</span> et nos
 estimateurs sont bien des estimateurs de maximum vraisemblance.</p>
 <p>Ces estimateurs vont nous permettre de travailler ensuite sur la
 construction d’intervalle de confiance de nos paramètres inconnus.</p>
@@ -1776,14 +1781,366 @@ construction d’intervalle de confiance de nos paramètres inconnus.</p>
 <p><br />
 </p>
 </div>
-<div id="intervalle-de-confiance-et-loi" class="section level4">
-<h4>1. 2. Intervalle de confiance et loi :</h4>
+<div id="loi-de-lestimateur" class="section level2">
+<h2>1. 2 Loi de l’estimateur :</h2>
+<div id="lemme" class="section level3">
+<h3>Lemme</h3>
+<p>Soit <span class="math inline">\(X \sim \Gamma(n,\beta)\)</span>.
+Alors la variable<br />
+<span class="math display">\[
+Y = \frac{2}{\beta}\,X
+\]</span> suit la loi <span class="math inline">\(\Gamma(n,2)\)</span>,
+c’est-à-dire la loi du <span class="math inline">\(\chi^2\)</span> à
+<span class="math inline">\(2n\)</span> degrés de liberté.</p>
+<hr />
+<div id="preuve" class="section level4">
+<h4>Preuve</h4>
+<p>Pour montrer que <span class="math inline">\(Y =
+\frac{2}{\beta}\,X\)</span> suit <span class="math inline">\(\Gamma(n,2)\)</span>, nous allons étudier
+l’espérance d’une fonction de <span class="math inline">\(Y\)</span>
+puis utiliser un changement de variable dans l’intégrale.</p>
+<p><strong>Rappel de la densité de <span class="math inline">\(X\)</span>.</strong><br />
+Comme <span class="math inline">\(X \sim \Gamma(n,\beta)\)</span>, pour
+toute fonction mesurable <span class="math inline">\(\phi\)</span> telle
+que <span class="math inline">\(\mathbb{E}[|\phi(Y)|] &lt;
+\infty\)</span>, on écrit : <span class="math display">\[
+   \mathbb{E}[\phi(Y)]
+   \;=\;
+   \int_{0}^{\infty}
+\phi\Bigl(\tfrac{2}{\beta}x\Bigr)\;f_X(x)\;\mathrm{d}x.
+   \]</span> Or <span class="math display">\[
+   f_X(x)
+   \;=\;
+   \frac{1}{\Gamma(n)\,\beta^n}\;x^{n-1}\,\exp\!\Bigl(-\tfrac{x}{\beta}\Bigr),
+   \quad x&gt;0.
+   \]</span></p>
+<p><strong>Changement de variable</strong><br />
+Posons <span class="math display">\[
+   y \;=\; \frac{2}{\beta}\,x
+   \quad\Longrightarrow\quad
+   x \;=\; \frac{\beta}{2}\,y,
+   \quad
+   \mathrm{d}x \;=\; \frac{\beta}{2}\,\mathrm{d}y.
+   \]</span> Alors, <span class="math display">\[
+   \mathbb{E}[\phi(Y)]
+   \;=\;
+   \int_{0}^{\infty}
+   \phi\Bigl(\tfrac{2}{\beta}x\Bigr)\,
+   \frac{1}{\Gamma(n)\,\beta^n}\;x^{n-1}\,\exp\!\Bigl(-\tfrac{x}{\beta}\Bigr)
+   \,\mathrm{d}x.
+   \]</span></p>
+<p>En substituant <span class="math inline">\(x =
+\frac{\beta}{2}\,y\)</span> et <span class="math inline">\(\mathrm{d}x =
+\frac{\beta}{2}\,\mathrm{d}y\)</span>, nous obtenons : <span class="math display">\[
+   \begin{aligned}
+   \mathbb{E}[\phi(Y)]
+   &amp;=
+   \int_{0}^{\infty}
+     \phi(y)
+     \;\frac{1}{\Gamma(n)\,\beta^n}
+     \Bigl(\tfrac{\beta}{2}\,y\Bigr)^{n-1}
+     \exp\!\Bigl(-\tfrac{\tfrac{\beta}{2}y}{\beta}\Bigr)
+     \;\frac{\beta}{2}\,\mathrm{d}y
+   \\[6pt]
+   &amp;=
+   \int_{0}^{\infty}
+     \phi(y)
+     \;\frac{1}{\Gamma(n)\,\beta^n}
+     \;\Bigl(\tfrac{\beta}{2}\Bigr)^{n-1}
+     \;y^{\,n-1}
+     \;\exp\!\Bigl(-\tfrac{y}{2}\Bigr)
+     \;\frac{\beta}{2}
+     \,\mathrm{d}y.
+   \end{aligned}
+   \]</span></p>
+<p>Factorisons les termes constants : <span class="math display">\[
+   \frac{1}{\Gamma(n)\,\beta^n}
+   \Bigl(\tfrac{\beta}{2}\Bigr)^{n-1}
+   \;\frac{\beta}{2}
+   \;=\;
+   \frac{1}{\Gamma(n)\,\beta^n}
+   \;\frac{\beta^n}{2^n}
+   \;=\;
+   \frac{1}{2^n\,\Gamma(n)}.
+   \]</span></p>
+<p>Ainsi, <span class="math display">\[
+   \mathbb{E}[\phi(Y)]
+   =
+   \int_{0}^{\infty}
+     \phi(y)
+     \;\frac{1}{2^n\,\Gamma(n)}
+     \;y^{\,n-1}
+     \exp\!\Bigl(-\tfrac{y}{2}\Bigr)
+   \,\mathrm{d}y.
+   \]</span></p>
+<p><strong>Interprétation</strong><br />
+L’expression <span class="math display">\[
+   \frac{1}{2^n\,\Gamma(n)}\,y^{\,n-1}\,\exp\!\Bigl(-\tfrac{y}{2}\Bigr),
+   \quad y&gt;0
+   \]</span> est exactement la densité d’une loi <span class="math inline">\(\Gamma(n,2)\)</span>, laquelle coïncide aussi avec
+une loi <span class="math inline">\(\chi^2_{2n}\)</span>.</p>
+<p>Par conséquent, pour toute fonction <span class="math inline">\(\phi\)</span>, l’espérance de <span class="math inline">\(\phi(Y)\)</span> coïncide avec celle que l’on
+obtiendrait si <span class="math inline">\(Y\)</span> avait la densité
+<span class="math inline">\(\Gamma(n,2)\)</span>. L’unicité de la loi
+impliquée par cette égalité d’intégrales pour toutes les fonctions test
+<span class="math inline">\(\phi\)</span> permet de conclure que<br />
+<span class="math display">\[
+   Y = \frac{2}{\beta}\,X \;\sim\;\Gamma\bigl(n,2\bigr).
+   \]</span></p>
+<ol start="5" style="list-style-type: decimal">
+<li><strong>Remarque</strong><br />
+Puisque <span class="math inline">\(\Gamma(n,2)\)</span> est une <span class="math inline">\(\chi^2\)</span> à <span class="math inline">\(2n\)</span> degrés de liberté, on peut également
+écrire : <span class="math display">\[
+\frac{2}{\beta}\,X \;\sim\;\chi^2_{2n}.
+\]</span></li>
+</ol>
+</div>
+</div>
+<div id="proposition" class="section level3">
+<h3>Proposition</h3>
+<p>Dans le cas de l’observation d’un processus de Weibull sur <span class="math inline">\([0,t]\)</span>, on a<br />
+<span class="math display">\[
+Z_n = \frac{\beta}{\widehat{\beta}} \mid \{N(t)=n\} \sim
+\Gamma\Bigl(n,\frac{1}{n}\Bigr) \quad (n\neq 0),
+\]</span> et par conséquent,<br />
+<span class="math display">\[
+\frac{2n\,\beta}{\widehat{\beta}} \mid \{N(t)=n\} \sim \chi^2(2n).
+\]</span></p>
+<div id="preuve-1" class="section level4">
+<h4>Preuve</h4>
+<p>Sachant <span class="math inline">\(\{N(t)=n\}\)</span>, on a :</p>
+<p><span class="math display">\[
+  Z_n
+  \;=\;
+  \frac{\beta}{\widehat{\beta}}
+  \;=\;
+  \beta \,\ln(t)
+  \;-\;
+  \frac{\beta}{n}\,\sum_{i=1}^n \ln\!\bigl(T_i\bigr).
+\]</span></p>
+<p>On a également que <span class="math display">\[
+  \bigl(T_1,\dots,T_n\bigr)
+  \;\stackrel{\text{loi}}{=}\;
+  \bigl(X_{(1)},\dots,X_{(n)}\bigr),
+\]</span> où <span class="math inline">\(\bigl(X_{(1)},\dots,X_{(n)}\bigr)\)</span> désigne
+l’ordre statistique d’un échantillon i.i.d. <span class="math inline">\((X_1,\dots,X_n)\)</span> de densité <span class="math display">\[
+  f(x)
+  \;=\;
+  \frac{\lambda(x)}{\displaystyle\int_{0}^{t}\!\lambda(s)\,\mathrm{d}s}
+  \,\mathbf{1}_{\{0&lt;x&lt;t\}},
+\]</span> avec <span class="math display">\[
+  \lambda(x)
+  \;=\;
+  \frac{\beta}{\alpha^\beta}\,x^{\beta - 1},
+  \quad
+\]</span> et <span class="math display">\[
+  \int_{0}^{t}\!\lambda(s)\,\mathrm{d}s
+  \;=\;
+  \int_{0}^{t}\!\frac{\beta}{\alpha^\beta}\,s^{\beta-1}\,\mathrm{d}s
+  \;=\;
+  \frac{\beta}{\alpha^\beta}\,\frac{t^\beta}{\beta}
+  \;=\;
+  \frac{t^\beta}{\alpha^\beta}.
+\]</span> Donc, <span class="math display">\[
+  f(x)
+  \;=\;
+  \frac{\dfrac{\beta}{\alpha^\beta}\,x^{\,\beta-1}}{\dfrac{t^\beta}{\alpha^\beta}}
+  \,\mathbf{1}_{\{0&lt;x&lt;t\}}
+  \;=\;
+  \frac{\beta x^{\,\beta-1}}{\,t^\beta\,}
+  \,\mathbf{1}_{\{0&lt;x&lt;t\}}.
+\]</span></p>
+<p>Par ailleurs, puisque <span class="math inline">\((T_1,\dots,T_n)\)</span> et <span class="math inline">\((X_1,\dots,X_n)\)</span> coïncident en loi (à
+réordonnancement près), on a que : <span class="math display">\[
+  \sum_{i=1}^n \ln\!\bigl(T_i\bigr)
+  \;=\;
+  \sum_{i=1}^n \ln\!\bigl(X_i\bigr)
+  \quad
+  \text{(en loi).}
+\]</span></p>
+<p>On considère la fonction génératrice des moments (FGM) de <span class="math inline">\(Z_n\)</span> : <span class="math display">\[
+  \mathbb{E}\bigl[e^{\,u\,Z_n}\bigr]
+  \;=\;
+  \mathbb{E}\!\Bigl[
+    \exp\!\Bigl(
+      u\,\Bigl[\beta\,\ln(t)\;-\;\tfrac{\beta}{n}\,\sum_{i=1}^n
+\ln(T_i)\Bigr]
+    \Bigr)
+  \Bigr].
+\]</span> En factorisant <span class="math inline">\(\exp\{u\,\beta\,\ln(t)\} =
+t^{\,\beta\,u}\)</span>, on obtient : <span class="math display">\[
+  \mathbb{E}\bigl[e^{\,u\,Z_n}\bigr]
+  \;=\;
+  t^{\,\beta\,u}
+  \;\times\;
+  \mathbb{E}\!\Bigl[
+    \exp\!\Bigl(
+      -\,\tfrac{\beta\,u}{n}\,\sum_{i=1}^n \ln(T_i)
+    \Bigr)
+  \Bigr].
+\]</span></p>
+<p>En substituant <span class="math inline">\(\sum_{i=1}^n
+\ln(T_i)\)</span> par <span class="math inline">\(\sum_{i=1}^n
+\ln(X_i)\)</span> (même loi) et en utilisant l’indépendance des <span class="math inline">\(X_i\)</span>, nous obtenons :</p>
+<p><span class="math display">\[
+\begin{aligned}
+\mathbb{E}\bigl[e^{\,u\,Z_n}\bigr]
+&amp;=\;
+t^{\,\beta\,u}
+\;\times\;
+\mathbb{E}\!\Bigl[
+   \exp\!\Bigl(
+     -\,\frac{\beta\,u}{n}
+     \sum_{i=1}^n \ln\!\bigl(X_i\bigr)
+   \Bigr)
+\Bigr]
+\\[6pt]
+&amp;=\;
+t^{\,\beta\,u}
+\;\times\;
+\mathbb{E}\!\Bigl[
+  \prod_{i=1}^n
+    \underbrace{\exp\!\Bigl(
+      -\,\tfrac{\beta\,u}{n}\,\ln\!\bigl(X_i\bigr)
+    \Bigr)}_{\displaystyle X_i^{-\,\tfrac{\beta\,u}{n}}}
+\Bigr]
+\\[6pt]
+&amp;=\;
+t^{\,\beta\,u}
+\;\times\;
+\mathbb{E}\!\Bigl[
+  \prod_{i=1}^n
+    X_i^{-\,\tfrac{\beta\,u}{n}}
+\Bigr]
+\\[6pt]
+&amp;=\;
+t^{\,\beta\,u}
+\;\times\;
+\Bigl(
+  \mathbb{E}\!\bigl[
+    X_1^{-\,\tfrac{\beta\,u}{n}}
+  \bigr]
+\Bigr)^n
+\quad
+\bigl(\text{car les }X_i \text{ sont i.i.d.}\bigr).
+\end{aligned}
+\]</span></p>
+<p>On calcule <span class="math inline">\(\mathbb{E}\!\Bigl[X_1^{-\,\frac{\beta\,u}{n}}\Bigr]\)</span>
+:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\mathbb{E}\!\Bigl[X_1^{-\,\frac{\beta u}{n}}\Bigr]
+&amp;=\; \int_{\mathbb{R}} x^{-\,\frac{\beta u}{n}}\, f(x)\, dx \\
+&amp;=\; \int_{\mathbb{R}} x^{-\,\frac{\beta u}{n}}\, \frac{\beta\,
+x^{\beta-1}}{t^\beta}\,\mathbf{1}_{\{0&lt;x&lt;t\}}\, dx \\
+&amp;=\; \frac{\beta}{t^\beta} \int_{0}^{t} x^{\beta-1-\frac{\beta
+u}{n}}\, dx \\
+&amp;=\; \frac{\beta}{t^\beta}\,\left[\frac{x^{\beta-\frac{\beta
+u}{n}}}{\beta-\frac{\beta u}{n}}\right]_{0}^{t} \\
+&amp;=\; \frac{\beta}{t^\beta}\,\frac{t^{\beta-\frac{\beta
+u}{n}}}{\beta-\frac{\beta u}{n}} \\
+&amp;=\; \frac{\beta\,t^{-\frac{\beta
+u}{n}}}{\beta\left(1-\frac{u}{n}\right)} \\
+&amp;=\; \frac{t^{-\frac{\beta u}{n}}}{1-\frac{u}{n}}.
+\end{aligned}
+\]</span></p>
+<p>On injecte l’expression obtenue pour <span class="math inline">\(\mathbb{E}\!\Bigl[X_1^{-\,\frac{\beta\,u}{n}}\Bigr]\)</span>
+dans l’expression de <span class="math inline">\(\mathbb{E}\bigl[e^{\,u\,Z_n}\bigr]\)</span>, ce
+qui donne :</p>
+<p><span class="math display">\[
+\begin{aligned}
+\mathbb{E}\bigl[e^{\,u\,Z_n}\bigr]
+&amp;=\; t^{\beta u}\times\Bigl(\mathbb{E}\bigl[X_1^{-\,\frac{\beta
+u}{n}}\bigr]\Bigr)^n \\
+&amp;=\; t^{\beta u}\times\left(\frac{t^{-\frac{\beta
+u}{n}}}{\,1-\frac{u}{n}}\right)^n \\
+&amp;=\; t^{\beta u}\times\frac{t^{-\beta
+u}}{\Bigl(1-\frac{u}{n}\Bigr)^n} \\
+&amp;=\; \frac{1}{\Bigl(1-\frac{u}{n}\Bigr)^n}.
+\end{aligned}
+\]</span></p>
+<p>On reconnaît que cette expression est la fonction génératrice des
+moments d’une loi <span class="math inline">\(\Gamma\left(n,\frac{1}{n}\right)\)</span>. Par
+conséquent, on a</p>
+<p><span class="math display">\[
+Z_n = \frac{\beta}{\widehat{\beta}} \sim
+\Gamma\left(n,\frac{1}{n}\right).
+\]</span></p>
+<p>D’après le lemme précédent : <span class="math display">\[ X \sim
+\Gamma(n,\beta) \quad \Rightarrow \quad \frac{2X}{\beta} \sim
+\chi^2_{2n}, \]</span></p>
+<p>donc dans notre cas : <span class="math display">\[ Z_n =
+\frac{\beta}{\widehat{\beta}} \sim \Gamma\Bigl(n,\frac{1}{n}\Bigr) \quad
+\Rightarrow \quad \frac{2Z_n}{1/n} = 2n\,Z_n \sim \chi^2_{2n}.
+\]</span></p>
+<p>Ce qui conclut la preuve.</p>
+</div>
+</div>
+</div>
+<div id="intervalle-de-confiance" class="section level2">
+<h2>1. 3. Intervalle de confiance :</h2>
 <p><br />
 </p>
 <p>=&gt; César et Florian</p>
-<p><br />
-</p>
-</div>
+<p>Nous avons donc <span class="math display">\[
+\frac{2n\beta}{\hat{\beta}} \]</span> suivant une loi de khi deux à
+<span class="math inline">\(2n\)</span> degrès de liberté, <span class="math inline">\(\chi^2(2n)\)</span>.</p>
+<p>Construisons l’intervalle de confiance bilatéral de niveau <span class="math inline">\(\gamma\)</span> sur <span class="math inline">\(\beta\)</span> associé.</p>
+<p><span class="math display">\[ \mathbb{P}
+\bigg(x_{\frac{1-\gamma}{2},2n}&lt;\frac{2n\beta}{\hat{\beta}}&lt;x_{\frac{1+\gamma}{2},2n}\bigg
+| N(t)=n \bigg)= \gamma \]</span> avec <span class="math inline">\(x_{\frac{1-\gamma}{2},2n}\)</span> le quantile de
+niveau <span class="math inline">\(\frac{1-\gamma}{2}\)</span> d’une
+<span class="math inline">\(\chi^2(2n)\)</span>.</p>
+<p>D’où</p>
+<p><span class="math display">\[ \mathbb{P} \bigg(\beta \in \bigg[
+\frac{\hat{\beta}}{2n} x_{\frac{1+\gamma}{2},2n} ,
+\frac{\hat{\beta}}{2n} x_{\frac{1+\gamma}{2},2n}\bigg]\bigg | N(t)=n
+\bigg)= \gamma \]</span></p>
+<p>Ainsi un premier intervalle de confiance sur <span class="math inline">\(\beta\)</span> est : <span class="math display">\[\bigg[ \frac{\hat{\beta}}{2n}
+x_{\frac{1+\gamma}{2},2n} , \frac{\hat{\beta}}{2n}
+x_{\frac{1+\gamma}{2},2n}\bigg]\]</span> Partie de cesar et florian ?
+##### Intervalles de confiance asymptotiques</p>
+<p>Nous allons désormais nous interesser au comportement asymptotique
+des estimateurs <span class="math inline">\(\hat\beta\)</span> et <span class="math inline">\(\hat\alpha\)</span>, soit lorsque <span class="math inline">\(t\)</span> tend vers l’infini.</p>
+<p>Lorsque t tend vers l’infini, les variables aléatoires suivantes
+convergent en loi vers une loi normale centrée réduite, <span class="math inline">\(\mathcal{N} (0,1)\)</span> :</p>
+<p>Pour <span class="math inline">\(\alpha\)</span> : <span class="math display">\[
+\frac{\sqrt{N(t)}}{log(t)}log(\frac{\hat\alpha}{\alpha}) \]</span> (1)
+<span class="math display">\[
+\frac{\sqrt{N(t)}}{log(t)}(\frac{\hat\alpha}{\alpha}-1) \]</span>
+(2)</p>
+<p>pour <span class="math inline">\(\beta\)</span> : <span class="math display">\[ \sqrt{N(t)}(\frac{\hat\beta}{\beta}-1) \]</span>
+(3) <span class="math display">\[ \sqrt{N(t)}(\frac{\beta}{\hat\beta}-1)
+\]</span> (4)</p>
+<p>Construisons les intervalles de confiance asymptotiques bilatéraux
+associés.</p>
+<p>Soit <span class="math inline">\(n_\gamma\)</span> le quantile
+d’ordre <span class="math inline">\(\gamma\)</span> d’une <span class="math inline">\(\mathcal{N} (0,1)\)</span>,</p>
+<p>pour <span class="math inline">\(\alpha\)</span> :</p>
+<p>En reprenant (1), nous avons,</p>
+<p><span class="math display">\[ \mathbb{P}
+\bigg(n_{\frac{1-\gamma}{2}}&lt;\frac{\sqrt{N(t)}}{log(t)}log(\frac{\hat\alpha}{\alpha})&lt;n_{\frac{1+\gamma}{2}}\bigg)
+\overset{t\to+\infty}{\longrightarrow} \gamma \]</span> ce qui donne
+après calcul :</p>
+<p><span class="math display">\[ \mathbb{P} \bigg(\hat\alpha
+~exp\bigg(\frac{-log(t)} {\sqrt{N(t)}} n_{\frac{1+\gamma}{2}}\bigg)
+&lt;\alpha &lt;\hat\alpha ~exp\bigg(\frac{-log(t)} {\sqrt{N(t)}}
+n_{\frac{1+\gamma}{2}}\bigg) \bigg)
+\overset{t\to+\infty}{\longrightarrow} \gamma \]</span></p>
+<p>Ainsi</p>
+<p><span class="math display">\[IC_\gamma(\alpha)=\bigg[\hat\alpha
+~exp\bigg(\frac{-log(t)} {\sqrt{N(t)}} n_{\frac{1+\gamma}{2}}\bigg)
+,\hat\alpha ~exp\bigg(\frac{-log(t)} {\sqrt{N(t)}}
+n_{\frac{1+\gamma}{2}}\bigg) \bigg]  \]</span> est un intervalle de
+confiance bilatéral asymptotique pour alpha.</p>
+<p>Pour <span class="math inline">\(\beta\)</span> :</p>
+<p>En reprenant (3), nous avons</p>
+<p><span class="math display">\[ \mathbb{P} \bigg(n_{(1- \gamma)
+/2}&lt;\sqrt{N(t)}(\frac{\hat\beta}{\beta}-1)&lt;n_{(1- \gamma)
+/2}\bigg) \overset{t\to+\infty}{\longrightarrow} \gamma \]</span></p>
+<p>Ainsi lorsque t tend vers <span class="math inline">\(+\infty\)</span> <span class="math display">\[IC_\gamma(\beta)=\bigg[\hat\beta(1-\frac{n_{(1-
+\gamma) /2}}{\sqrt{N(t)}}), \hat\beta(1+\frac{n_{(1- \gamma)
+/2}}{\sqrt{N(t)}})\bigg]\]</span></p>
 </div>
 <div id="résultats-numériques" class="section level2">
 <h2>2. Résultats numériques :</h2>
@@ -1832,6 +2189,7 @@ plot.PP(PPi1)</code></pre>
 <pre class="r"><code>#estimalpha=T*exp(-1/beta*log(simulPPi()))
 
 #il y a un message d&#39;erreur car il manque les arguement dans la fonction simulPPi</code></pre>
+</div>
 </div>
 
 
