@@ -203,28 +203,34 @@ $$IC_\gamma(\beta)=\bigg[\hat\beta(1-\frac{n_{(1- \gamma) /2}}{\sqrt{N(t)}}), \h
 #### 2.1 Numerical simulations in order to validate, from a practical point of view, the confidence intervals presented in [Cocozza-Thivent, 1997]
 
 
-Simulation of a homogeneous Poisson process with intensity `lambda` on the window [0,`Tmax`].
-
-```{r simulPPh1,eval=FALSE}
-simulPPh1 <- function(lambda,Tmax)
-{ n=rpois(1,lambda*Tmax)
-  u=runif(n,0,Tmax)
-  p=sort(u)
-  return(p)
-}
+Simulation d'un processus de poisson inhomogène :
+```{r}
+#simulPPi <- function(Tmax,M,alpha,beta)
+#{ lambda_fct <- function(x){return(alpha/beta*(x/alpha)^(beta-1))}
+ # t=cumsum(lambda_fct(0:Tmax))
+ # n= simulPPh1(M,Tmax)
+ # y=runif(n,0,M)
+ # n[y<=lambda_fct(n)]
+ # return(n)
+#}
 ```
 
 
-
-Simulation d'un processus de poisson inhomogène :
 ```{r}
-simulPPi = function(Tmax,M,alpha,beta)
-{ lambda_fct <- function(x){return(alpha/beta*(x/alpha)^(beta-1))}
-  t=cumsum(lambda_fct(0:Tmax))
-  n= simulPPh1(M,Tmax)
-  y=runif(n,0,M)
-  n[y<=lambda_fct(n)]
-  return(n)
+simulPPi <- function(Tmax, alpha, beta) {
+  Lamba<-function(x){(x/alpha)**beta}
+  invLambda<-function(x){alpha*x**(1/beta)}
+  S=0     # Temps actuel
+  t=invLambda(0)
+  #c'est le temps à chaque n 
+  events=c()
+  # Boucle while pour générer les temps d'arrivée
+  while (invLambda(t) <= Tmax) {
+       t=t+rexp(1,rate=1)
+       events<-c(events,invLambda(t))
+      }
+  return (events)
+  
 }
 ```
 
@@ -244,7 +250,7 @@ plot.PP<- function(PP)
 Testons la simulation pour les paramètres suivant : 
 
 ```{r lambda1,eval=FALSE}
-Tmax=10
+Tmax=100
 alphatest = 3
 betatest= 1
 M1=1
@@ -252,10 +258,10 @@ M1=1
 
 
 ```{r}
-PPitest = simulPPi(Tmax,M1,alphatest,betatest)
+PPitest = simulPPi(Tmax,alphatest,betatest)
 par(mfrow=c(1,2))
 #curve(lambda_fct(alpha,beta),from=0,to=Tmax,n=1000)
-plot.PP(PPitest)
+#plot.PP(PPitest)
 print(PPitest)
 ```
 
@@ -263,6 +269,7 @@ Bien, maintenant que nous savons comment simuler un PPi, estimons les paramètre
 
 
 #### Estimateurs de alpha et beta
+
 
 Fonction pour estimer beta et alpha :
  
@@ -276,54 +283,66 @@ MLE<-function(PPi) {
 }
 
 ```
+
+```{r}
  
-
-```{r}
-alpha=1
-beta=0.5
-Tillustr=1:500
-MLEalpha=c()
-MLEbeta=c()
-for (Tmax in Tillustr){
-  MLE_results=MLE(simulPPi(Tmax,Tmax,alpha,beta))
-  MLEalpha=c(MLEalpha,MLE_results[1])
-  MLEbeta=c(MLEbeta,MLE_results[2])
-  }
-plot(Tillustr,MLEalpha,xlab="Tmax",ylab="MLEalpha")
-abline(h=alpha,col="red",lwd=alpha)
-```
-
-
-```{r}
-plot(Tillustr,MLEbeta,xlab="Tmax",ylab="MLEbeta")
-abline(h=beta,col="red",lwd=beta)
-```
-
- 
-```{r}
 testintervallesalpha <- function(PPi, MLE_alpha, alpha) {
   z <- qnorm(0.975)
   inside <- logical(length(MLE_alpha))
   for (i in seq_along(MLE_alpha)) {
-    N=i
+    N=length(PPi)
     t_i <- PPi[i]  # on prend le t correspondant à alpha
-    inside[i] <- (MLE_alpha[i] * exp(-log(t_i) / sqrt(N) * z)< MLE_alpha[i] && MLE_alpha[i] * exp(log(t_i) / sqrt(N) * z> MLE_alpha[i]))
+    inside[i] <- ((MLE_alpha[i] * exp(-log(t_i) / sqrt(N) * z)> alpha) && (MLE_alpha[i] * exp(log(t_i) / sqrt(N) * z)<alpha))
+    print(MLE_alpha[i] * exp(-log(t_i) / sqrt(N) * z))
+    print(MLE_alpha[i] * exp(log(t_i) / sqrt(N) * z))
   }
-  return(mean(inside))
+  return (mean(inside))
 }
 
 testintervallesbeta <- function(PPi, MLE_beta, beta) {
   z <- qnorm(0.975)
   inside <- logical(length(MLE_beta))
   for (i in seq_along(MLE_beta)) {
-    N=i
+    N=length(PPi)
     t_i <- PPi[i]  # on prend le t correspondant à beta
-    inside[i] <- (MLE_beta[i] * (1 - z / sqrt(N)) < beta && MLE_beta[i] * (1 + z / sqrt(N)) > beta) 
+    inside[i] <- (MLE_beta[i]* (1 - z / sqrt(N)) < beta && MLE_beta[i] * (1 + z / sqrt(N)) > beta) 
   }
   return(mean(inside))
 }
 ```
 
+```{r}
+alpha=1
+beta=2
+Tillustr=1:100
+MLEalpha=c()
+MLEbeta=c()
+interalpha=c()
+interbeta=c()
+for (Tmax in Tillustr){
+  PPi=simulPPi(Tmax,alpha,beta)
+  
+  MLE_results=MLE(PPi)
+  MLEalpha=c(MLEalpha,MLE_results[1])
+  MLEbeta=c(MLEbeta,MLE_results[2])
+  
+  interalpha=c(interalpha,testintervallesalpha(PPi,MLE_results[1],alpha))
+  interbeta=c(interbeta,testintervallesbeta(PPi,MLE_results[2],beta))
+  print("lol")
+  print(testintervallesalpha(PPi,MLE_results[1],alpha))
+  print(MLE_results)
+  }
+plot(Tillustr,MLEalpha,xlab="Tmax",ylab="MLEalpha")
+abline(h=alpha,col="red",lwd=alpha)
+print(mean(interalpha))
+```
+
+
+```{r}
+plot(Tillustr,MLEbeta,xlab="Tmax",ylab="MLEbeta")
+abline(h=beta,col="red",lwd=beta)
+print(mean(interbeta))
+```
 
 
 
