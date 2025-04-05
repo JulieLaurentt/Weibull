@@ -9,8 +9,9 @@ output:
 ## 1. Résultats théoriques : 
 
 \
+Nous étudions le processus de Weibull (power law process dans la terminologie américaine). C'est un processus de Poisson d'intensité : $\lambda(s)=\frac{\beta}{\alpha}(\frac{s}{\alpha})^{\beta-1}$ où les paramètres $\alpha$ et $\beta$ sont inconnus. Il modélise les instants successifs de défaillance d'un matériel dont le taux de défaillance est de type Weibull et qui subit de petites réparations. Notre travail se base essentiellement sur  le livre "Processus Stochastiques et fiabilité des systèmes" par C. Cocozza-Thivent paru en 1997. De plus, nous nous placçcons dans le cas où T, le temps maximum est fixé. Le nombre d'observation est quant à lui variable.
 
-On étudie le processus de Weibull (power law process dans la terminologie américaine). C'est un processus de Poisson d'intensité : $\lambda(s)=\frac{\beta}{\alpha}(\frac{s}{\alpha})^{\beta-1}$ où les paramètres $\alpha$ et $\beta$ sont inconnus. 
+
 
 \
 
@@ -198,23 +199,9 @@ $$IC_\gamma(\beta)=\bigg[\hat\beta(1-\frac{n_{(1- \gamma) /2}}{\sqrt{N(t)}}), \h
 
 ## 2. Résultats numériques : 
 
-\
-
-#### 2.1 Numerical simulations in order to validate, from a practical point of view, the confidence intervals presented in [Cocozza-Thivent, 1997]
 
 
-Simulation d'un processus de poisson inhomogène :
-```{r}
-#simulPPi <- function(Tmax,M,alpha,beta)
-#{ lambda_fct <- function(x){return(alpha/beta*(x/alpha)^(beta-1))}
- # t=cumsum(lambda_fct(0:Tmax))
- # n= simulPPh1(M,Tmax)
- # y=runif(n,0,M)
- # n[y<=lambda_fct(n)]
- # return(n)
-#}
-```
-
+Simulation d'un processus de poisson inhomogène par méthide de changement de temps : 
 
 ```{r}
 simulPPi <- function(Tmax, alpha, beta) {
@@ -229,21 +216,21 @@ simulPPi <- function(Tmax, alpha, beta) {
        t=t+rexp(1,rate=1)
        events<-c(events,invLambda(t))
       }
-  return (events)
+  return (events[1:length(events)-1])
   
 }
 ```
 
-Let us define a plot function for a counting process `PP`. 
+Fonction pour afficher nos simulations : 
 ```{r plot.PP}
 plot.PP<- function(PP)
 {
   # plot the counting process (with jumps of size 1 (starting at point (0,0))):
-  plot(c(0,PP),0:length(PP),type="s",xlab="time t",ylab="number of events by time t")
+  plot(c(0,PP),0:length(PP),type="s",xlab="time t",ylab="Number of events by time t")
   # add the arrival times on the horizontal axis: 
-  points(PP,0*PP,type="p",pch=16)
+  points(PP,0*PP,type="p",pch=16, col='red')
   # link arrival times with the counts:
-  lines(PP,0:(length(PP)-1),type="h",lty=2)
+  lines(PP,0:(length(PP)-1),type="h",lty=2, col='blue')
 }
 ```
 
@@ -253,7 +240,6 @@ Testons la simulation pour les paramètres suivant :
 Tmax=100
 alphatest = 3
 betatest= 1
-M1=1
 ```
 
 
@@ -261,11 +247,11 @@ M1=1
 PPitest = simulPPi(Tmax,alphatest,betatest)
 par(mfrow=c(1,2))
 #curve(lambda_fct(alpha,beta),from=0,to=Tmax,n=1000)
-#plot.PP(PPitest)
+plot.PP(PPitest)
 print(PPitest)
 ```
 
-Bien, maintenant que nous savons comment simuler un PPi, estimons les paramètres $\beta$ et $\alpha$ pour pouvoir faire des intervals de confiance.
+Bien, maintenant que nous savons comment simuler un PPi, estimons les paramètres $\beta$ et $\alpha$ et étudions les intervalles de confiance asymptotiques.
 
 
 #### Estimateurs de alpha et beta
@@ -284,67 +270,101 @@ MLE<-function(PPi) {
 
 ```
 
+
+Fonctions pour tester si alpha_MLE et beta_MLE appartiennent aux intervalles de confiance $$\bigg[\hat\alpha ~exp\bigg(\frac{-log(t)} {\sqrt{N(t)}} n_{\frac{1+\gamma}{2}}\bigg) ,\hat\alpha ~exp\bigg(\frac{-log(t)} {\sqrt{N(t)}} n_{\frac{1+\gamma}{2}}\bigg) \bigg]  \times \bigg[\hat\beta(1-\frac{n_{(1- \gamma) /2}}{\sqrt{N(t)}}), \hat\beta(1+\frac{n_{(1- \gamma) /2}}{\sqrt{N(t)}})\bigg]$$ lorsque t tend vers +$\infty$
+
+Nous prenons $\gamma$=0.05.
 ```{r}
  
 testintervallesalpha <- function(PPi, MLE_alpha, alpha) {
   z <- qnorm(0.975)
-  inside <- logical(length(MLE_alpha))
-  for (i in seq_along(MLE_alpha)) {
-    N=length(PPi)
-    t_i <- PPi[i]  # on prend le t correspondant à alpha
-    inside[i] <- ((MLE_alpha[i] * exp(-log(t_i) / sqrt(N) * z)> alpha) && (MLE_alpha[i] * exp(log(t_i) / sqrt(N) * z)<alpha))
-    print(MLE_alpha[i] * exp(-log(t_i) / sqrt(N) * z))
-    print(MLE_alpha[i] * exp(log(t_i) / sqrt(N) * z))
-  }
-  return (mean(inside))
+  N=length(PPi)
+  inside<-logical(1)
+  t_i <- PPi[N]  # on prend le t correspondant à alpha
+  inside <- ((MLE_alpha * exp(-log(t_i) / sqrt(N) * z)< alpha) && (MLE_alpha * exp(log(t_i) / sqrt(N) * z)>alpha))
+  #print(paste( MLE_alpha, "appartient à l'IC" ,MLE_alpha * exp(-log(t_i) / sqrt(N) * z),(MLE_alpha * exp(log(t_i) / sqrt(N) * z)), inside )) #pour faire afficher chaque estim et IC
+  return (inside)
 }
 
 testintervallesbeta <- function(PPi, MLE_beta, beta) {
   z <- qnorm(0.975)
   inside <- logical(length(MLE_beta))
-  for (i in seq_along(MLE_beta)) {
-    N=length(PPi)
-    t_i <- PPi[i]  # on prend le t correspondant à beta
-    inside[i] <- (MLE_beta[i]* (1 - z / sqrt(N)) < beta && MLE_beta[i] * (1 + z / sqrt(N)) > beta) 
-  }
-  return(mean(inside))
+  N=length(PPi)
+  t_i <- PPi[N]  # on prend le t correspondant à beta
+  inside <- (MLE_beta* (1 - z / sqrt(N)) < beta && MLE_beta * (1 + z / sqrt(N)) > beta) 
+  return(inside)
 }
 ```
+
+Testons la convergence de nos estimateurs lorsque t tend vers $+\infty$ avec $\alpha$=1 et $\beta$=2 :
 
 ```{r}
 alpha=1
 beta=2
-Tillustr=1:100
+Tillustr=3:200
 MLEalpha=c()
 MLEbeta=c()
 interalpha=c()
 interbeta=c()
+
 for (Tmax in Tillustr){
   PPi=simulPPi(Tmax,alpha,beta)
-  
   MLE_results=MLE(PPi)
+  
   MLEalpha=c(MLEalpha,MLE_results[1])
   MLEbeta=c(MLEbeta,MLE_results[2])
   
   interalpha=c(interalpha,testintervallesalpha(PPi,MLE_results[1],alpha))
   interbeta=c(interbeta,testintervallesbeta(PPi,MLE_results[2],beta))
-  print("lol")
-  print(testintervallesalpha(PPi,MLE_results[1],alpha))
-  print(MLE_results)
   }
 plot(Tillustr,MLEalpha,xlab="Tmax",ylab="MLEalpha")
 abline(h=alpha,col="red",lwd=alpha)
-print(mean(interalpha))
+print(paste("Proportion de alpha_MLE qui appartiennent à l'IC :" , mean(interalpha)))
 ```
 
 
 ```{r}
 plot(Tillustr,MLEbeta,xlab="Tmax",ylab="MLEbeta")
 abline(h=beta,col="red",lwd=beta)
-print(mean(interbeta))
+print(paste("Proportion de beta_MLE qui appartiennent à l'IC :" , mean(interbeta)))
+```
+
+Numériquement, nous confirmons bien nos résultats théoriques sur les intervalles de confiance asymptotiques. On observe une proportion d'environ 95% d'IC contenant véritablement alpha et beta lorsque t est grand. 
+
+
+
+Afin d'être certain, testons avec d'autres valeurs de $\alpha$ et $\beta$.
+Testons la convergence de nos estimateurs lorsque t tend vers $+\infty$ avec $\alpha$=0.5 et $\beta$=0.9 :
+```{r}
+alpha=1
+beta=2
+Tillustr=3:200
+MLEalpha=c()
+MLEbeta=c()
+interalpha=c()
+interbeta=c()
+
+for (Tmax in Tillustr){
+  PPi=simulPPi(Tmax,alpha,beta)
+  MLE_results=MLE(PPi)
+  
+  MLEalpha=c(MLEalpha,MLE_results[1])
+  MLEbeta=c(MLEbeta,MLE_results[2])
+  
+  interalpha=c(interalpha,testintervallesalpha(PPi,MLE_results[1],alpha))
+  interbeta=c(interbeta,testintervallesbeta(PPi,MLE_results[2],beta))
+  }
+plot(Tillustr,MLEalpha,xlab="Tmax",ylab="MLEalpha")
+abline(h=alpha,col="red",lwd=alpha)
+print(paste("Proportion de alpha_MLE qui appartiennent à l'IC :" , mean(interalpha)))
 ```
 
 
+```{r}
+plot(Tillustr,MLEbeta,xlab="Tmax",ylab="MLEbeta")
+abline(h=beta,col="red",lwd=beta)
+print(paste("Proportion de beta_MLE qui appartiennent à l'IC :" , mean(interbeta)))
+```
 
 
 
