@@ -1,0 +1,944 @@
+---
+title: "Power Law"
+author: "Berrie, Michel, Galuppini, Laurent"
+date: "2025-03-07"
+output:
+  html_document:
+    df_print: paged
+---
+## 1. Résultats théoriques : 
+
+\
+Nous étudions le processus de Weibull (power law process dans la terminologie américaine). C'est un processus de Poisson d'intensité : $\lambda(s)=\frac{\beta}{\alpha}(\frac{s}{\alpha})^{\beta-1}$ où les paramètres $\alpha$ et $\beta$ sont inconnus. Il modélise les instants successifs de défaillance d'un matériel dont le taux de défaillance est de type Weibull et qui subit de petites réparations. Notre travail se base essentiellement sur  le livre "Processus Stochastiques et fiabilité des systèmes" par C. Cocozza-Thivent paru en 1997. De plus, nous nous placçcons dans le cas où T, le temps maximum est fixé. Le nombre d'observation est quant à lui variable.
+
+
+
+\
+
+
+#### 1. 1 Estimateurs des paramètres inconnus :
+\
+
+
+Nous allons estimer les paramètres $\alpha$ et $\beta$ par leurs estimateurs de maximum vraisemblance (MLE), $\hat{\alpha}$ et $\hat{\beta}$.
+
+\
+
+Dans un premier temps nous allons calculer $L(N,\theta)$ tel que :
+
+On note  $\hat {\theta}$=($\hat{\alpha}$,$\hat{\beta}$.), $\hat{\theta} \in \arg\max_{\theta \in \mathbb{R}^+}  L(N,\theta)$
+ 
+
+D'après la proposition 4.14 du cours, la vraisemblance vaut dans le cas d'un processus inhomogène :
+
+$L((N_t)_{t \in[0,T]; \theta})$ = $\left( \prod_{i=1}^{N_t}\lambda(T_i) \right) \exp \left(-\int_0^T \lambda(x)dx \right)$
+
+On remplace $\lambda$ par la fonction du Weibull ainsi :
+
+$L((N_t)_{t \in[0,T]; \theta})$=$\left(\prod_{i=1}^{N_t}\frac{\beta}{\alpha}(\frac{T_i}{\alpha})^{\beta-1} \right) \exp(\frac{T}{\alpha})^{\beta}$
+
+puisque en effet :
+
+$\left(-\int_0^T \lambda(x)dx \right)$=$\left(-\int_0^T \frac{\beta}{\alpha}(\frac{x}{\alpha})^{\beta-1}dx \right)$
+                                      =$\frac{-\beta}{\alpha}\frac{1}{\alpha^{\beta-1}}\left[ \frac{1}{\beta}x^{\beta} \right]_0^T$
+                                      =$(\frac{T}{\alpha})^{\beta}$
+
+\
+
+Nous passons au log pour calculer la logvraisemblance (nous travaillons sur R+) afin de passer d'un produit à une somme et de nous faciliter les prochains calculs:
+=> justifier que on travail sur R+
+
+$l((N_t)_{t \in[0,T]; \theta})=log(L((N_t)_{t \in[0,T]; \theta}))$ = $N_t((log(\beta)-\beta log(\alpha))+ (\beta-1) \sum_{i=1}^{N_t}log(T_i)-(\frac{t}{\alpha})^\beta$
+
+\
+
+Ensuite nous calculons le gradient de la logvraisemblance pour trouver les estimateurs qui maximisent la log vraisemblance. 
+
+$$\nabla l =
+\begin{bmatrix}\frac{\partial l}{\partial \alpha} \\\frac{\partial l}{\partial \beta}\end{bmatrix}=
+\begin{bmatrix}\frac{-\beta}{\alpha} N_t + \beta\frac{1}{\alpha}(\frac{T}{\alpha})^{\beta}\\N_t((\frac{1}{\beta}- log(\alpha))+ \sum_{i=1}^{N_t}log(T_i)-log(\frac{T}{\alpha})exp(\beta\log(\frac{T}{\alpha})) \end{bmatrix}$$
+
+Dans notre cas, on cherche à trouver le point où le gradient s'annule (présence de maximum ou de minimum) ainsi $\nabla l=0$ soit :
+
+
+$$\begin{bmatrix}log(\frac{\beta}{\alpha}(\frac{T}{\alpha})^{\beta}) = log(\frac{\beta}{\alpha}N_t) ^{*}\\\frac{1}{\beta} = log(\alpha) -\frac{1}{N_t} \sum_{i=1}^{N_t}log(T_i) + \frac{1}{N_t}log(\frac{T}{\alpha})exp(\beta\log(\frac{T}{\alpha})) \end{bmatrix}$$
+
+or d'après * on peut en déduire que :
+
+$log(\beta)-log(\alpha) +{\beta}log(\frac{T}{\alpha}) = log(\beta) -log(\alpha) +log(N_t)$
+\
+${\beta}log(\frac{T}{\alpha}) = log(N_t)$ 
+
+ainsi :
+
+$$\begin{bmatrix}log(\alpha) = log(T) -\frac{1}{\beta}log(N_t)\\\frac{1}{\beta} = log(\alpha) -\frac{1}{N_t} \sum_{i=1}^{N_t}log(T_i) + \frac{1}{N_t}log(\frac{T}{\alpha})exp(log(N_t)) \end{bmatrix}$$
+et finalement :
+
+$$\begin{bmatrix}log(\alpha) = log(T) -\frac{1}{\beta}log(N_t)\\\frac{1}{\beta} = log(T) -\frac{1}{N_t} \sum_{i=1}^{N_t}log(T_i) \end{bmatrix}$$
+
+De plus, pour vérifier que nous sommes bien sur un maximum (vérification de la concavité) nous allons analyser le signe de la Hessienne localement en ce point en partant de $\nabla l$ calculé plus haut :
+
+Premièrement calculons les dérivées partielles de notre gradiant (donc les dérivées secondes) :
+
+$$\begin{bmatrix} \frac{\partial^2 l}{\partial \alpha^2} = \frac{\beta}{\alpha^2}N_t - \frac{\beta}{\alpha^2}(\frac{T}{\alpha})^\beta - \frac{\beta^2}{\alpha^2}(\frac{T}{\alpha})^\beta
+\\\frac{\partial^2 l}{\partial \alpha \partial \beta} =-\frac{N_t}{\alpha} +\frac{1}{\alpha}exp(\beta\log(\frac{T}{\alpha})) + \frac{\beta}{\alpha}\log(\frac{T}{\alpha})exp(\beta\log(\frac{T}{\alpha}))
+\\\frac{\partial^2 l}{\partial \beta^2}= -\frac{N_t}{\beta^2} - log(\frac{T}{\alpha})^2exp(\beta\log(\frac{T}{\alpha}))
+\\\frac{\partial^2 l}{\partial \beta \partial \alpha}=-\frac{N_t}{\alpha} +\frac{1}{\alpha}exp(\beta\log(\frac{T}{\alpha})) + \frac{\beta}{\alpha}\log(\frac{T}{\alpha})exp(\beta\log(\frac{T}{\alpha}))
+\end{bmatrix}$$
+
+Or localement on a pour rappel :
+
+$$ \frac{\partial l}{\partial \alpha}=0$$ donc $$\frac{-\beta}{\alpha} N_t + \beta\frac{1}{\alpha}(\frac{T}{\alpha})^{\beta}=0$$ ainsi $$(\frac{T}{\alpha})^{\beta}=N_t$$
+d'où : $$exp(\beta\log(\frac{T}{\alpha}))=(\frac{T}{\alpha})^\beta=N_t$$
+
+Ce qui nous permet de dire que localement, (sachant $N_t>0$) :
+
+$$\frac{\partial^2 l}{\partial \alpha^2} = \frac{\beta}{\alpha^2}N_t - \frac{\beta}{\alpha^2}N_t - \frac{\beta^2}{\alpha^2}N_t=- \frac{\beta^2}{\alpha^2}N_t<0$$
+$$\frac{\partial^2 l}{\partial \beta^2} = -\frac{N_t}{\beta^2} - N_t\log(\frac{T}{\alpha})^2 <0$$
+
+On remarque que $\frac{\partial^2 l}{\partial \alpha^2}$ et $\frac{\partial^2 l}{\partial \beta^2}$ sont toutes deux négatives or pour rappel :
+
+$$
+\text{Tr}(H) = \frac{\partial^2 f}{\partial \alpha^2} + \frac{\partial^2 f}{\partial \beta^2}
+$$
+ainsi $\text{Tr}(H(\hat{\alpha}, \hat{\beta})) <0$ ce qui signifie que la somme des valeurs propre de $H(\hat{\alpha}, \hat{\beta})$ est négative. 
+
+De plus on a pour rappel : $$
+\det(H) = \frac{\partial^2 f}{\partial \alpha^2} \cdot \frac{\partial^2 f}{\partial \beta^2}
+- \left(\frac{\partial^2 f}{\partial \alpha \partial \beta}\right)^2
+$$
+
+ainsi :
+
+$$
+\det(H(\hat{\alpha}, \hat{\beta})) =
+\left. \frac{\partial^2 f}{\partial \alpha^2} \right|_{\alpha = \hat{\alpha}, \beta = \hat{\beta}}
+\cdot
+\left. \frac{\partial^2 f}{\partial \beta^2} \right|_{\alpha = \hat{\alpha}, \beta = \hat{\beta}}
+- \left( \left. \frac{\partial^2 f}{\partial \alpha \partial \beta} \right|_{\alpha = \hat{\alpha}, \beta = \hat{\beta}} \right)^2
+=\frac{1}{\alpha^2}N_t^2+\frac{\beta^2}{\alpha^2}N_t^2log(\frac{T}{\alpha})^2-\frac{\beta^2}{\alpha^2}N_t^2log(\frac{T}{\alpha})^2=\frac{N_t^2}{\alpha^2}>0
+$$
+
+Ainsi $\det(H(\hat{\alpha}, \hat{\beta}))>0$ ce qui signifie que le produit des valeurs propre de $H(\hat{\alpha}, \hat{\beta})$ est positif. 
+
+Nous pouvons donc en déduire que les valeurs propres de $H(\hat{\alpha}, \hat{\beta})$ sont toutes négatives ce qui siginifie que localement nous nous trouvons sur un maximum. 
+
+
+Finalement on a bien  $\hat{\theta} \in \arg\max_{\theta \in \mathbb{R}^+}  L(N,\theta)$ et nos estimateurs sont bien des estimateurs de maximum vraisemblance.
+
+Ces estimateurs vont nous permettre de travailler ensuite sur la construction d'intervalle de confiance de nos paramètres inconnus.
+
+C'est ce que nous allons faire ci-dessous.
+
+\
+
+
+#### 1. 2  Loi de l'estimateur :
+
+##### Lemme
+
+Soit \(X \sim \Gamma(n,\beta)\). Alors la variable  
+\[
+Y = \frac{2}{\beta}\,X
+\]
+suit la loi \(\Gamma(n,2)\), c'est-à-dire la loi du \(\chi^2\) à \(2n\) degrés de liberté.
+
+---
+
+##### Preuve
+
+Pour montrer que $Y = \frac{2}{\beta}\,X$ suit $\Gamma(n,2)$, nous allons étudier l’espérance 
+d’une fonction de $Y$ puis utiliser un changement de variable dans l’intégrale.
+
+**Rappel de la densité de $X$.**  
+   Comme $X \sim \Gamma(n,\beta)$, pour toute fonction mesurable $\phi$ telle que 
+   $\mathbb{E}[|\phi(Y)|] < \infty$, on écrit :
+   $$
+   \mathbb{E}[\phi(Y)]
+   \;=\;
+   \int_{-\infty}^{\infty} \phi\Bigl(\tfrac{2}{\beta}x\Bigr)\;f_X(x)\;\mathrm{d}x.
+   $$
+   Or 
+   $$
+   f_X(x) 
+   \;=\; 
+   \frac{1}{\Gamma(n)\,\beta^n}\;x^{n-1}\,\exp\!\Bigl(-\tfrac{x}{\beta}\Bigr), 
+   \quad x>0.
+   $$
+
+**Changement de variable**  
+   Posons 
+   $$
+   y \;=\; \frac{2}{\beta}\,x 
+   \quad\Longrightarrow\quad
+   x \;=\; \frac{\beta}{2}\,y,
+   \quad
+   \mathrm{d}x \;=\; \frac{\beta}{2}\,\mathrm{d}y.
+   $$
+   Alors, 
+   $$
+   \mathbb{E}[\phi(Y)]
+   \;=\; 
+   \int_{0}^{\infty} 
+   \phi\Bigl(\tfrac{2}{\beta}x\Bigr)\,
+   \frac{1}{\Gamma(n)\,\beta^n}\;x^{n-1}\,\exp\!\Bigl(-\tfrac{x}{\beta}\Bigr)
+   \,\mathrm{d}x.
+   $$
+
+   En substituant $x = \frac{\beta}{2}\,y$ et $\mathrm{d}x = \frac{\beta}{2}\,\mathrm{d}y$, 
+   nous obtenons :
+   $$
+   \begin{aligned}
+   \mathbb{E}[\phi(Y)]
+   &= 
+   \int_{0}^{\infty}
+     \phi(y)
+     \;\frac{1}{\Gamma(n)\,\beta^n}
+     \Bigl(\tfrac{\beta}{2}\,y\Bigr)^{n-1}
+     \exp\!\Bigl(-\tfrac{\tfrac{\beta}{2}y}{\beta}\Bigr)
+     \;\frac{\beta}{2}\,\mathrm{d}y
+   \\[6pt]
+   &=
+   \int_{0}^{\infty}
+     \phi(y)
+     \;\frac{1}{\Gamma(n)\,\beta^n}
+     \;\Bigl(\tfrac{\beta}{2}\Bigr)^{n-1}
+     \;y^{\,n-1}
+     \;\exp\!\Bigl(-\tfrac{y}{2}\Bigr)
+     \;\frac{\beta}{2}
+     \,\mathrm{d}y.
+   \end{aligned}
+   $$
+
+   Factorisons les termes constants :
+   $$
+   \frac{1}{\Gamma(n)\,\beta^n}
+   \Bigl(\tfrac{\beta}{2}\Bigr)^{n-1}
+   \;\frac{\beta}{2}
+   \;=\;
+   \frac{1}{\Gamma(n)\,\beta^n}
+   \;\frac{\beta^n}{2^n}
+   \;=\;
+   \frac{1}{2^n\,\Gamma(n)}.
+   $$
+
+   Ainsi,
+   $$
+   \mathbb{E}[\phi(Y)]
+   =
+   \int_{0}^{\infty}
+     \phi(y)
+     \;\frac{1}{2^n\,\Gamma(n)}
+     \;y^{\,n-1}
+     \exp\!\Bigl(-\tfrac{y}{2}\Bigr)
+   \,\mathrm{d}y.
+   $$
+
+**Interprétation**  
+   L’expression 
+   $$
+   \frac{1}{2^n\,\Gamma(n)}\,y^{\,n-1}\,\exp\!\Bigl(-\tfrac{y}{2}\Bigr), 
+   \quad y>0
+   $$
+   est exactement la densité d’une loi $\Gamma(n,2)$, 
+   laquelle coïncide aussi avec une loi $\chi^2_{2n}$.  
+
+   Par conséquent, pour toute fonction $\phi$, l’espérance de $\phi(Y)$ 
+   coïncide avec celle que l’on obtiendrait si $Y$ avait la densité 
+   $\Gamma(n,2)$. L’unicité de la loi impliquée par cette égalité d’intégrales 
+   pour toutes les fonctions test $\phi$ permet de conclure que  
+   $$
+   Y = \frac{2}{\beta}\,X \;\sim\;\Gamma\bigl(n,2\bigr).
+   $$
+
+
+   Puisque $\Gamma(n,2)$ est une $\chi^2$ à $2n$ degrés de liberté, on peut 
+   également écrire :
+   $$
+   \frac{2}{\beta}\,X \;\sim\;\chi^2_{2n}.
+   $$
+
+
+
+#### Proposition
+Dans le cas de l'observation d'un processus de Weibull sur \([0,t]\), on a  
+\[
+Z_n = \frac{\beta}{\widehat{\beta}} \mid \{N(t)=n\} \sim \Gamma\Bigl(n,\frac{1}{n}\Bigr) \quad (n\neq 0),
+\]
+et par conséquent,  
+\[
+\frac{2n\,\beta}{\widehat{\beta}} \mid \{N(t)=n\} \sim \chi^2(2n).
+\]
+
+
+
+#### Preuve 
+Sachant \(\{N(t)=n\}\), on a :
+
+\[
+  Z_n 
+  \;=\; 
+  \frac{\beta}{\widehat{\beta}}
+  \;=\;
+  \beta \,\ln(t)
+  \;-\;
+  \frac{\beta}{n}\,\sum_{i=1}^n \ln\!\bigl(T_i\bigr).
+\]
+
+On a également que
+\[
+  \bigl(T_1,\dots,T_n\bigr)
+  \;\stackrel{\text{loi}}{=}\;
+  \bigl(X_{(1)},\dots,X_{(n)}\bigr),
+\]
+où \(\bigl(X_{(1)},\dots,X_{(n)}\bigr)\) désigne l’ordre statistique 
+d’un échantillon i.i.d. \((X_1,\dots,X_n)\) de densité
+\[
+  f(x)
+  \;=\;
+  \frac{\lambda(x)}{\displaystyle\int_{0}^{t}\!\lambda(s)\,\mathrm{d}s}
+  \,\mathbf{1}_{\{0<x<t\}},
+\]
+avec
+\[
+  \lambda(x)
+  \;=\;
+  \frac{\beta}{\alpha^\beta}\,x^{\beta - 1},
+  \quad
+\]
+et
+\[
+  \int_{0}^{t}\!\lambda(s)\,\mathrm{d}s
+  \;=\;
+  \int_{0}^{t}\!\frac{\beta}{\alpha^\beta}\,s^{\beta-1}\,\mathrm{d}s
+  \;=\;
+  \frac{\beta}{\alpha^\beta}\,\frac{t^\beta}{\beta}
+  \;=\;
+  \frac{t^\beta}{\alpha^\beta}.
+\]
+Donc,
+\[
+  f(x)
+  \;=\;
+  \frac{\dfrac{\beta}{\alpha^\beta}\,x^{\,\beta-1}}{\dfrac{t^\beta}{\alpha^\beta}}
+  \,\mathbf{1}_{\{0<x<t\}}
+  \;=\;
+  \frac{\beta x^{\,\beta-1}}{\,t^\beta\,}
+  \,\mathbf{1}_{\{0<x<t\}}.
+\]
+
+Par ailleurs, puisque \((T_1,\dots,T_n)\) et \((X_1,\dots,X_n)\) coïncident en loi (à réordonnancement près), on a que :
+\[
+  \sum_{i=1}^n \ln\!\bigl(T_i\bigr)
+  \;=\;
+  \sum_{i=1}^n \ln\!\bigl(X_i\bigr)
+  \quad
+  \text{(en loi).}
+\]
+
+On considère la fonction génératrice des moments (FGM) de \(Z_n\) :
+\[
+  \mathbb{E}\bigl[e^{\,u\,Z_n}\bigr]
+  \;=\;
+  \mathbb{E}\!\Bigl[
+    \exp\!\Bigl(
+      u\,\Bigl[\beta\,\ln(t)\;-\;\tfrac{\beta}{n}\,\sum_{i=1}^n \ln(T_i)\Bigr]
+    \Bigr)
+  \Bigr].
+\]
+En factorisant \(\exp\{u\,\beta\,\ln(t)\} = t^{\,\beta\,u}\), on obtient :
+\[
+  \mathbb{E}\bigl[e^{\,u\,Z_n}\bigr]
+  \;=\;
+  t^{\,\beta\,u}
+  \;\times\;
+  \mathbb{E}\!\Bigl[
+    \exp\!\Bigl(
+      -\,\tfrac{\beta\,u}{n}\,\sum_{i=1}^n \ln(T_i)
+    \Bigr)
+  \Bigr].
+\]
+
+En substituant \(\sum_{i=1}^n \ln(T_i)\) par \(\sum_{i=1}^n \ln(X_i)\) (même loi) et en utilisant l’indépendance des \(X_i\), nous obtenons :
+
+\[
+\begin{aligned}
+\mathbb{E}\bigl[e^{\,u\,Z_n}\bigr]
+&=\;
+t^{\,\beta\,u}
+\;\times\;
+\mathbb{E}\!\Bigl[
+   \exp\!\Bigl(
+     -\,\frac{\beta\,u}{n}
+     \sum_{i=1}^n \ln\!\bigl(X_i\bigr)
+   \Bigr)
+\Bigr]
+\\[6pt]
+&=\;
+t^{\,\beta\,u}
+\;\times\;
+\mathbb{E}\!\Bigl[
+  \prod_{i=1}^n 
+    \underbrace{\exp\!\Bigl(
+      -\,\tfrac{\beta\,u}{n}\,\ln\!\bigl(X_i\bigr)
+    \Bigr)}_{\displaystyle X_i^{-\,\tfrac{\beta\,u}{n}}}
+\Bigr]
+\\[6pt]
+&=\;
+t^{\,\beta\,u}
+\;\times\;
+\mathbb{E}\!\Bigl[
+  \prod_{i=1}^n 
+    X_i^{-\,\tfrac{\beta\,u}{n}}
+\Bigr]
+\\[6pt]
+&=\;
+t^{\,\beta\,u}
+\;\times\;
+\Bigl(
+  \mathbb{E}\!\bigl[
+    X_1^{-\,\tfrac{\beta\,u}{n}}
+  \bigr]
+\Bigr)^n
+\quad
+\bigl(\text{car les }X_i \text{ sont i.i.d.}\bigr).
+\end{aligned}
+\]
+
+
+On calcule \(\mathbb{E}\!\Bigl[X_1^{-\,\frac{\beta\,u}{n}}\Bigr]\) :
+
+\[
+\begin{aligned}
+\mathbb{E}\!\Bigl[X_1^{-\,\frac{\beta u}{n}}\Bigr]
+&=\; \int_{\mathbb{R}} x^{-\,\frac{\beta u}{n}}\, f(x)\, dx \\
+&=\; \int_{\mathbb{R}} x^{-\,\frac{\beta u}{n}}\, \frac{\beta\, x^{\beta-1}}{t^\beta}\,\mathbf{1}_{\{0<x<t\}}\, dx \\
+&=\; \frac{\beta}{t^\beta} \int_{0}^{t} x^{\beta-1-\frac{\beta u}{n}}\, dx \\
+&=\; \frac{\beta}{t^\beta}\,\left[\frac{x^{\beta-\frac{\beta u}{n}}}{\beta-\frac{\beta u}{n}}\right]_{0}^{t} \\
+&=\; \frac{\beta}{t^\beta}\,\frac{t^{\beta-\frac{\beta u}{n}}}{\beta-\frac{\beta u}{n}} \\
+&=\; \frac{\beta\,t^{-\frac{\beta u}{n}}}{\beta\left(1-\frac{u}{n}\right)} \\
+&=\; \frac{t^{-\frac{\beta u}{n}}}{1-\frac{u}{n}}.
+\end{aligned}
+\]
+
+
+On injecte l'expression obtenue pour \(\mathbb{E}\!\Bigl[X_1^{-\,\frac{\beta\,u}{n}}\Bigr]\) dans l'expression de \(\mathbb{E}\bigl[e^{\,u\,Z_n}\bigr]\), ce qui donne :
+
+\[
+\begin{aligned}
+\mathbb{E}\bigl[e^{\,u\,Z_n}\bigr]
+&=\; t^{\beta u}\times\Bigl(\mathbb{E}\bigl[X_1^{-\,\frac{\beta u}{n}}\bigr]\Bigr)^n \\
+&=\; t^{\beta u}\times\left(\frac{t^{-\frac{\beta u}{n}}}{\,1-\frac{u}{n}}\right)^n \\
+&=\; t^{\beta u}\times\frac{t^{-\beta u}}{\Bigl(1-\frac{u}{n}\Bigr)^n} \\
+&=\; \frac{1}{\Bigl(1-\frac{u}{n}\Bigr)^n}.
+\end{aligned}
+\]
+
+On reconnaît que cette expression est la fonction génératrice des moments d'une loi \(\Gamma\left(n,\frac{1}{n}\right)\). Par conséquent, on a
+
+\[
+Z_n = \frac{\beta}{\widehat{\beta}} \sim \Gamma\left(n,\frac{1}{n}\right).
+\]
+
+D'après le lemme précédent : 
+\[ X \sim \Gamma(n,\beta) \quad \Rightarrow \quad \frac{2X}{\beta} \sim \chi^2_{2n}, \]
+
+donc dans notre cas : 
+\[ Z_n = \frac{\beta}{\widehat{\beta}} \sim \Gamma\Bigl(n,\frac{1}{n}\Bigr) \quad \Rightarrow \quad \frac{2Z_n}{1/n} = 2n\,Z_n \sim \chi^2_{2n}. \]
+
+
+Ce qui conclut la preuve.
+
+#### 1. 3. Intervalle de confiance : 
+
+Nous avons donc  $$ \frac{2n\beta}{\hat{\beta}} $$ suivant une loi de khi deux à $2n$ degrès de liberté, $\chi^2(2n)$.
+
+Construisons l'intervalle de confiance bilatéral de niveau $\gamma$ sur $\beta$ associé.
+
+$$ \mathbb{P} \bigg(x_{\frac{1-\gamma}{2},2n}<\frac{2n\beta}{\hat{\beta}}<x_{\frac{1+\gamma}{2},2n}\bigg | N(t)=n \bigg)= \gamma $$
+avec $x_{\frac{1-\gamma}{2},2n}$ le quantile de niveau $\frac{1-\gamma}{2}$ d'une  $\chi^2(2n)$.
+
+D'où
+
+$$ \mathbb{P} \bigg(\beta \in \bigg[ \frac{\hat{\beta}}{2n} x_{\frac{1+\gamma}{2},2n} , \frac{\hat{\beta}}{2n} x_{\frac{1+\gamma}{2},2n}\bigg]\bigg | N(t)=n \bigg)= \gamma $$
+
+Ainsi un premier intervalle de confiance sur $\beta$ est : 
+$$\bigg[ \frac{\hat{\beta}}{2n} x_{\frac{1+\gamma}{2},2n} , \frac{\hat{\beta}}{2n} x_{\frac{1+\gamma}{2},2n}\bigg]$$
+##### Intervalles de confiance asymptotiques
+
+Nous allons désormais nous interesser au comportement asymptotique des estimateurs $\hat\beta$ et $\hat\alpha$, soit lorsque $t$ tend vers l'infini.
+
+Lorsque  t tend vers l'infini, nous admettons que les variables aléatoires suivantes convergent en loi vers une loi normale centrée réduite, $\mathcal{N} (0,1)$ : 
+
+Pour \(\alpha\) :
+$$
+\frac{\sqrt{\Lambda(t)}}{\log(t)}\log\left(\frac{\hat\alpha}{\alpha}\right) \quad (a)
+$$
+$$
+\frac{\sqrt{\Lambda(t)}}{\log(t)}\left(\frac{\hat\alpha}{\alpha}-1\right) \quad (b)
+$$
+
+Nous allons désormais nous interesser au comportement asymptotique des estimateurs $\hat\beta$ et $\hat\alpha$, soit lorsque $t$ tend vers l'infini.
+
+Pour \(\beta\) :
+$$
+\sqrt{\Lambda(t)}\left(\frac{\hat\beta}{\beta}-1\right) \quad (c)
+$$
+$$
+\sqrt{\Lambda(t)}\left(\frac{\beta}{\hat\beta}-1\right) \quad (d)
+$$
+
+Nous admettons également , d'après la référence Cocozza_Thivent proposition 2.20, lorsque \( t \) tend vers \( +\infty \) :
+ 
+
+$$
+\left(\frac{N(t)}{\Lambda(t)}\right) \xrightarrow{\text{p.s.}} 1
+$$
+La convergence presque surement entraine la convergence en probabilité. De plus sachant que la fonction $\sqrt{x}$ est continue sur son ensemble de définition.
+
+Nous pouvons écrire:
+
+$$
+\left(\frac{\sqrt{N(t)}   }{\sqrt{\Lambda(t)}}\right) \xrightarrow{\text{P}} \sqrt{1}=1
+$$
+Nous appliquons cela sur (a) : 
+
+$$
+\frac{\sqrt{N(t)}}{\log(t)}\log\left(\frac{\hat\alpha}{\alpha}\right)= \underbrace{\left(\frac{\sqrt{N(t)}  }{\sqrt{\Lambda(t)}}\right)}_{\displaystyle \xrightarrow{\text{P}} 1}
+\underbrace{\frac{\sqrt{\Lambda(t)}}{\log(t)}\log\left(\frac{\hat\alpha}{\alpha}\right)}_{\displaystyle \xrightarrow{\text{L}} \mathcal{N}(0,1)}
+$$
+D'après le lemme de Slutsky nous avons que:
+$$
+\frac{\sqrt{N(t)}}{\log(t)}\log\left(\frac{\hat\alpha}{\alpha}\right)\xrightarrow{\text{L}} \mathcal{N}(0,1)
+$$
+Ainsi, nous obtenons que (1) tend vers une normale centrée réduite.
+
+Nous pouvons faire la même chose sur (b), (c) et (d) pour obtenir que (2), (3) et (4) convergent aussi vers une normale centrée réduite quand t tend vers l'infini.
+
+
+
+En résumé, les statistiques pivotales suivantes convergent vers une normale centrée réduite quand t tend vers l'infini :
+
+Pour $\alpha$ :
+$$ \frac{\sqrt{N(t)}}{log(t)}log(\frac{\hat\alpha}{\alpha}) \quad (1)$$
+$$ \frac{\sqrt{N(t)}}{log(t)}(\frac{\hat\alpha}{\alpha}-1) \quad (2)$$
+
+pour $\beta$ : 
+$$ \sqrt{N(t)}(\frac{\hat\beta}{\beta}-1) \quad (3)$$
+$$ \sqrt{N(t)}(\frac{\beta}{\hat\beta}-1) \quad (4)$$
+
+
+Construisons les intervalles de confiance asymptotiques bilatéraux associés.
+
+Soit $n_\gamma$ le quantile d'ordre $\gamma$ d'une $\mathcal{N} (0,1)$, 
+
+pour $\alpha$ : 
+
+En reprenant (1), nous avons,
+
+$$ \mathbb{P} \bigg(n_{\frac{1-\gamma}{2}}<\frac{\sqrt{N(t)}}{log(t)}log(\frac{\hat\alpha}{\alpha})<n_{\frac{1+\gamma}{2}}\bigg) \overset{t\to+\infty}{\longrightarrow} \gamma $$
+ce qui donne après calcul : 
+
+$$ \mathbb{P} \bigg(\hat\alpha ~exp\bigg(\frac{-log(t)} {\sqrt{N(t)}} n_{\frac{1+\gamma}{2}}\bigg) 
+<\alpha <\hat\alpha ~exp\bigg(\frac{-log(t)} {\sqrt{N(t)}} n_{\frac{1+\gamma}{2}}\bigg) \bigg) \overset{t\to+\infty}{\longrightarrow} \gamma $$
+
+Ainsi 
+
+$$IC_\gamma(\alpha)=\bigg[\hat\alpha ~exp\bigg(\frac{-log(t)} {\sqrt{N(t)}} n_{\frac{1+\gamma}{2}}\bigg) ,\hat\alpha ~exp\bigg(\frac{-log(t)} {\sqrt{N(t)}} n_{\frac{1+\gamma}{2}}\bigg) \bigg]  $$ est un intervalle de confiance bilatéral asymptotique pour alpha.
+
+
+Pour $\beta$ :
+
+En reprenant (3), nous avons 
+
+
+$$ \mathbb{P} \bigg(n_{(1- \gamma) /2}<\sqrt{N(t)}(\frac{\hat\beta}{\beta}-1)<n_{(1- \gamma) /2}\bigg) \overset{t\to+\infty}{\longrightarrow} \gamma $$
+
+Ainsi lorsque t tend vers $+\infty$
+$$IC_\gamma(\beta)=\bigg[\hat\beta(1-\frac{n_{(1- \gamma) /2}}{\sqrt{N(t)}}), \hat\beta(1+\frac{n_{(1- \gamma) /2}}{\sqrt{N(t)}})\bigg]$$
+
+ 
+
+
+#### Test d'adéquation
+
+Le but de cette partie est de construire un test permettant de vérifier si un échantillon est issu d’un processus de Weibull.
+
+Nous allons nous appuyer sur le théorème suivant, tiré de la référence Moller 1976:
+
+##### Théorème 
+
+Pour tout \( n > 2 \), le vecteur stochastique 
+
+$$
+(-\ln ( W_{n-1}/ W_n), -\ln ( W_{n-2}/ W_n), \dots, -\ln ( W_1/W_n))
+$$
+
+suit la même loi que $n - 1$ observations ordonnées indépendantes d'une distribution exponentielle de paramètre $\gamma^{-1}$ si et seulement si les événements enregistrés proviennent d'un processus Rasch-Weibull avec un paramètre de tendance $\gamma$.
+
+##### Construction du test
+
+Soit un échantillon d'observations de temps d'arrivée indépendants $W_1, W_2, \dots, W_n$.
+
+Appliquons la transformation suivante aux $W_i$ et notons $Z_i$ les variables transformées:
+
+$$
+Z_i = -\ln \left( \frac{W_i}{W_n} \right), \quad i = 1, 2, \dots, n-1.
+$$
+
+Nous ordonnons les $Z_i$ et par construction nous pouvons supposer que les $Z_i$ sont indépendants.
+
+
+Dans notre cas, nous souhaitons tester si notre échantillon provient d'une loi exponentielle paramètre $\gamma^{-1}$, mais le paramètre de cette distribution  n’est pas connu  et doit être estimé directement à partir des données observées. 
+
+Le test classique de Kolmogorov-Smirnov repose sur l'hypothèse d'une distribution complètement spécifiée, où tous les paramètres sont connus préalablement. Or, comme indiqué dans la référence Lilliefors (1969), l’estimation du paramètre à partir de l'échantillon testé affecte significativement la distribution théorique de la statistique de test, rendant les seuils critiques standards non valides.
+
+Pour pallier ce problème, nous optons pour le test Lilliefors-corrected Kolmogorov-Smirnov, qui détermine la statistique de test avec une méthode de Monte Carlo. Cette correction garantit une meilleure validité statistique, en maintenant des niveaux de significativité corrects lorsque le paramètre de la loi exponentielle est estimé.
+
+En supposant qu'un temps d'arrivé n'impacte pas les autres , l'échantillon $W_1, W_2, \dots, W_n$ est iid et de fonction de répartition continue.
+
+##### Hypothèses
+
+$$
+H_0 :  Z_1, \dots, Z_{n-1} \overset{\text{i.i.d.}}{\sim} \mathrm{Exp}(\gamma^{-1}) \quad  \gamma \quad \text{inconnu}
+$$
+
+$$
+H_1 : \exists  i \in \{1, \dots, n-1\}  \quad Z_i\not\sim \text{Exp}(\gamma^{-1}) 
+$$
+
+D'après la référence  (Lilliefors, 1969) le test Lilliefors-corrected Kolmogorov-Smirnov estime le paramètre $\gamma$ par l'estimateur du maxium de vraisemblance:
+
+$$
+\gamma_{\text{MLE}} = \frac{n-1}{\sum_{i=1}^{n-1} Z_i} = \frac{n-1}{\sum_{i=1}^{n-1} -\ln \left( \frac{W_i}{W_n} \right)}
+$$
+De plus, notons $\hat{F}_n$ la fonction de répartition empirique de l'échantillon $Z_1, Z_2, \dots, Z_n$ que nous observons.   
+
+
+Pour tout $x \in \mathbb{R}$, elle est définie par :
+
+$$
+\hat{F}_n(x) = \frac{1}{n} \sum_{i=1}^{n} \mathbb{1} \{ Z_i \leq x \}
+$$
+
+
+$F_0(x)$ est la fonction de répartition théorique de la loi exponentielle de paramètre inconnu $\gamma^{-1}$.
+
+Soit $$
+F_0(x) =
+\begin{cases} 
+0, & \text{si } x < 0 \\
+1 - e^{-\gamma^{-1} x}, & \text{si } x \geq 0
+\end{cases}
+$$
+
+La statistique du test de Lilliefors-corrected Kolmogorov-Smirnov est définie par :
+
+$$
+D_n = \sup_{x \in \mathbb{R}} \left| F_{\gamma_{\text{MLE}}}(x) - \hat{F}_n(x) \right|.
+$$
+
+Sous l'hypothèse $H_0$, $D_n$ est indépendante de $F_{\gamma_{\text{MLE}}}$ et est tabulée. On rejettera $H_0$ dès lors que l'écart entre $F_{\gamma_{\text{MLE}}}(x)$ et $F_n(x)$ est significativement grand. Nous obtenons ainsi la zone de rejet suivante:
+
+$$ R_\alpha = \left\{ D_n \geq d_{1-\alpha} \right\}  $$ 
+où $d_{1-\alpha}$ est le 1-$\alpha$ quantile de $D_n$
+
+
+Dans le cas où nous acceptons $H_0$, d'après le théorème nous savons que les évenements de notre échantillon suivent une répartition de Weibull de tendance $\gamma$.
+
+## 2. Résultats numériques : 
+
+Simulation d'un processus de poisson inhomogène par méthode de changement de temps : 
+
+```{r}
+simulPPi <- function(Tmax, alpha, beta) {
+  Lamba<-function(x){(x/alpha)**beta}
+  invLambda<-function(x){alpha*x**(1/beta)}
+  S=0     # Temps actuel
+  t=invLambda(0)
+  #c'est le temps à chaque n 
+  events=c()
+  # Boucle while pour générer les temps d'arrivée
+  while (invLambda(t) <= Tmax) {
+       t=t+rexp(1,rate=1)
+       events<-c(events,invLambda(t))
+      }
+  return (events[1:length(events)-1])
+  
+}
+```
+
+Fonction pour afficher nos simulations : 
+```{r plot.PP}
+plot.PP<- function(PP)
+{
+  # plot the counting process (with jumps of size 1 (starting at point (0,0))):
+  plot(c(0,PP),0:length(PP),type="s",xlab="time t",ylab="Number of events by time t")
+  # add the arrival times on the horizontal axis: 
+  points(PP,0*PP,type="p",pch=16, col='red')
+  # link arrival times with the counts:
+  lines(PP,0:(length(PP)-1),type="h",lty=2, col='blue')
+}
+```
+
+Testons la simulation pour les paramètres suivant : 
+
+```{r lambda1}
+Tmax=100
+alphatest = 3
+betatest= 1
+```
+
+
+```{r}
+PPitest = simulPPi(Tmax,alphatest,betatest)
+par(mfrow=c(1,2))
+#curve(lambda_fct(alpha,beta),from=0,to=Tmax,n=1000)
+plot.PP(PPitest)
+print(PPitest)
+```
+
+Bien, maintenant que nous savons comment simuler un PPi, estimons les paramètres $\beta$ et $\alpha$ et étudions les intervalles de confiance asymptotiques.
+
+
+#### Estimateurs de alpha et beta
+
+
+Fonction pour estimer beta et alpha :
+ 
+```{r}
+MLE<-function(PPi) {
+  N_t=length(PPi)
+  Tm=PPi[N_t]
+  beta_hat=1/(log(Tm)-1/N_t*sum(log(PPi)))
+  alpha_hat=Tm*exp(-1/beta_hat*log(N_t))
+  return(c(alpha_hat,beta_hat))
+}
+
+```
+
+
+Fonctions pour tester si alpha_MLE et beta_MLE appartiennent aux intervalles de confiance $$\bigg[\hat\alpha ~exp\bigg(\frac{-log(t)} {\sqrt{N(t)}} n_{\frac{1+\gamma}{2}}\bigg) ,\hat\alpha ~exp\bigg(\frac{-log(t)} {\sqrt{N(t)}} n_{\frac{1+\gamma}{2}}\bigg) \bigg]  \times \bigg[\hat\beta(1-\frac{n_{(1- \gamma) /2}}{\sqrt{N(t)}}), \hat\beta(1+\frac{n_{(1- \gamma) /2}}{\sqrt{N(t)}})\bigg]$$ lorsque t tend vers +$\infty$
+
+Nous prenons $\gamma$=0.05.
+```{r}
+ 
+testintervallesalpha <- function(PPi, MLE_alpha, alpha) {
+  z <- qnorm(0.975)
+  N=length(PPi)
+  inside<-logical(1)
+  t_i <- PPi[N]  # on prend le t correspondant à alpha
+  inside <- ((MLE_alpha * exp(-log(t_i) / sqrt(N) * z)< alpha) && (MLE_alpha * exp(log(t_i) / sqrt(N) * z)>alpha))
+  #print(paste( MLE_alpha, "appartient à l'IC" ,MLE_alpha * exp(-log(t_i) / sqrt(N) * z),(MLE_alpha * exp(log(t_i) / sqrt(N) * z)), inside )) #pour faire afficher chaque estim et IC
+  return (inside)
+}
+
+testintervallesbeta <- function(PPi, MLE_beta, beta) {
+  z <- qnorm(0.975)
+  inside <- logical(length(MLE_beta))
+  N=length(PPi)
+  t_i <- PPi[N]  # on prend le t correspondant à beta
+  inside <- (MLE_beta* (1 - z / sqrt(N)) < beta && MLE_beta * (1 + z / sqrt(N)) > beta) 
+  return(inside)
+}
+```
+
+Testons la convergence de nos estimateurs lorsque t tend vers $+\infty$ avec $\alpha$=1 et $\beta$=2 :
+
+```{r}
+alpha=1
+beta=2
+Tillustr=3:200
+MLEalpha=c()
+MLEbeta=c()
+interalpha=c()
+interbeta=c()
+
+for (Tmax in Tillustr){
+  PPi=simulPPi(Tmax,alpha,beta)
+  MLE_results=MLE(PPi)
+  
+  MLEalpha=c(MLEalpha,MLE_results[1])
+  MLEbeta=c(MLEbeta,MLE_results[2])
+  
+  interalpha=c(interalpha,testintervallesalpha(PPi,MLE_results[1],alpha))
+  interbeta=c(interbeta,testintervallesbeta(PPi,MLE_results[2],beta))
+  }
+plot(Tillustr,MLEalpha,xlab="Tmax",ylab="MLEalpha")
+abline(h=alpha,col="red",lwd=alpha)
+print(paste("Proportion de alpha_MLE qui appartiennent à l'IC :" , mean(interalpha)))
+```
+
+
+```{r}
+plot(Tillustr,MLEbeta,xlab="Tmax",ylab="MLEbeta")
+abline(h=beta,col="red",lwd=beta)
+print(paste("Proportion de beta_MLE qui appartiennent à l'IC :" , mean(interbeta)))
+```
+
+Numériquement, nous confirmons bien nos résultats théoriques sur les intervalles de confiance asymptotiques. On observe une proportion d'environ 95% d'IC contenant véritablement alpha et beta lorsque t est grand. 
+
+
+
+Afin d'être certain, testons avec d'autres valeurs de $\alpha$ et $\beta$.
+Testons la convergence de nos estimateurs lorsque t tend vers $+\infty$ avec $\alpha$=0.5 et $\beta$=0.9 :
+```{r}
+alpha=1
+beta=2
+Tillustr=3:200
+MLEalpha=c()
+MLEbeta=c()
+interalpha=c()
+interbeta=c()
+
+for (Tmax in Tillustr){
+  PPi=simulPPi(Tmax,alpha,beta)
+  MLE_results=MLE(PPi)
+  
+  MLEalpha=c(MLEalpha,MLE_results[1])
+  MLEbeta=c(MLEbeta,MLE_results[2])
+  
+  interalpha=c(interalpha,testintervallesalpha(PPi,MLE_results[1],alpha))
+  interbeta=c(interbeta,testintervallesbeta(PPi,MLE_results[2],beta))
+  }
+plot(Tillustr,MLEalpha,xlab="Tmax",ylab="MLEalpha")
+abline(h=alpha,col="red",lwd=alpha)
+print(paste("Proportion de alpha_MLE qui appartiennent à l'IC :" , mean(interalpha)))
+```
+
+
+```{r}
+plot(Tillustr,MLEbeta,xlab="Tmax",ylab="MLEbeta")
+abline(h=beta,col="red",lwd=beta)
+print(paste("Proportion de beta_MLE qui appartiennent à l'IC :" , mean(interbeta)))
+```
+### Test d'adéquation sur le jeu de données Boeing 720.
+
+Dans la partie suivante, nous allons illustrer la réalisation numérique de la phase de test d’adéquation à l’aide d’un jeu de données représentant les intervalles entre les pannes de l’air conditionné dans une flotte d’avions Boeing 720.
+
+Nous considérons donc ici notre échantillon comme représentant les instants où les pannes interviennent. Il faut légèrement modifier le jeu de données afin de ne plus avoir les intervalles entre les pannes, mais les différents temps d’occurrence des pannes.
+
+```{r}
+library(KScorrect)
+library(readxl)
+df <- read_excel("data.xlsx",sheet = 1)
+head(df)  
+```
+Pour pouvoir faire un test Lilliefors-corrected Kolmogorov-Smirnov il faut avoir un échantillon iid de loi continue. 
+
+On suppose alors que lorsqu'une panne intervient, cela n’a pas d’impact sur le temps des pannes suivantes.
+
+Suivons le plan du test construit dans la partie théorique.
+
+Commençons par transformer les échantillons en calculant le vecteur Z pour l'avion 7907:
+```{r}
+W <- df[[1]]  
+W <- na.omit(W)
+# Supprime les valeurs NA
+W_n <- tail(W, 1)
+Z <- -log(W[1:(length(W) - 1)] / W_n)
+Z <- sort(Z)
+print(W)
+```
+Maintenant nous pouvons effectuer le test de Lilliefors-corrected Kolmogorov-Smirnov pour vérifier si notre échantillon est bien distribué selon une loi exponentielle.
+```{r}
+LcKS_result <- LcKS(Z, "pexp")
+cat("Statistique de test :", LcKS_result$D.obs, "\n")  
+cat("P-valeur :", LcKS_result$p.value, "\n") 
+
+```
+D’après les résultats, on obtient une p-valeur d’environ 0,086, soit supérieure à 0,05. Au seuil de 5 %, nous ne rejetons donc pas l’hypothèse nulle, soit nous acceptons que l’échantillon suit une loi exponentielle.. En revanche, la p-valeur est très proche de 0,05 ; cela est probablement dû à la faible taille de l’échantillon (seulement 7 observations).
+
+D’après le théorème présenté dans la partie théorique, nous pouvons modéliser le processus de comptage des pannes de l’air conditionné de l’avion 7907 par un processus de Weibull.
+
+Nous pouvons répéter la même opération pour les autres avions de la flotte :
+
+```{r}
+for (i in 1:ncol(df)) {
+  
+  avion_id <- colnames(df)[i]  # Nom de l'avion 
+  
+  W_avion <- df[[i]]
+  
+  W_avion <- na.omit(W_avion) 
+  
+  if (length(W_avion) > 1) {  
+    W_n_avion <- tail(W_avion, 1)
+    Z_avion <- -log(W_avion[1:(length(W_avion) - 1)] / W_n_avion)
+    Z_avion <- sort(Z_avion)
+    
+    #Estimateur du paramètre
+    g_avion <- mean(Z_avion)
+    
+    
+    LcKS_result_avion <- LcKS(Z_avion, "pexp")
+    
+      
+      
+      cat("\n======================================\n")
+      cat("Résultats pour l'avion", avion_id, "\n")
+      cat("--------------------------------------\n")
+      cat("Paramètre gamma estimé :", g_avion, "\n")
+      cat("Statistique D de Kolmogorov-Smirnov :", LcKS_result_avion$statistic, "\n")  
+      cat("P-valeur :", LcKS_result_avion$p.value, "\n") 
+      cat("======================================\n\n")
+    } else {
+      cat("\n======================================\n")
+      cat("L'avion", avion_id, "ne contient pas assez de données exploitables.\n")
+      cat("======================================\n\n")
+    }
+}
+
+```
+
+
+
+
+De manière analogue à l'avion B7907,nous pouvons modéliser le processus de comptage de panne de l'air conditionné de tous les avions par un processus de Weibull de paramètre de tendance égal au gamma estimé.
+
+En revanche pour les avions B8044 B7917 B7912 B7908 B7907 la p-valeur reste proche de 0.05 cela est probablement dû à la faible taille des échantillons.
+
+Nous allons finir par déterminer les intervalles de confiance pour les paramètres de l'avion B7909(la construction est identique pour les autres avions en adaptant le temps et le nombre de panne).
+
+Le paramètre de tendance que nous avons estimé correspond à la quantité que nous avons notée $\beta$ dans la partie théorique.
+
+En reprenant les intervalles de confiance asymptotiques présentés dans la section 1.3, nous obtenons :
+
+pour $\beta$ :
+```{r}
+hat_beta <- 1.149863
+N_t <- 28
+gamma <- 0.05
+
+z <- qnorm(1 - gamma / 2)
+
+lower_bound <- hat_beta * (1 - z / sqrt(N_t))
+upper_bound <- hat_beta * (1 + z / sqrt(N_t))
+
+
+IC <- c(lower_bound, upper_bound)
+names(IC) <- c("Lower", "Upper")
+IC
+```
+Pour $\alpha$, il faut commencer par estimer le paramètre, puis déterminer son intervalle de confiance.
+
+Notons que la quantité t est fixée à 2422, car il s’agit du temps d’observation des pannes pour l’avion B7909. Ce temps correspond au moment de la dernière panne observée. 
+
+
+```{r}
+hat_beta <- 1.149863
+t <- 2422
+hat_alpha=t*exp(-1/hat_beta*log(N_t))
+N_t <- 28
+gamma <- 0.05
+
+
+q <- qnorm((1 + gamma) / 2)
+lower_bound2 <- hat_alpha * exp(-log(t) / sqrt(N_t) * q)
+upper_bound2 <- hat_alpha * exp(log(t) / sqrt(N_t) * q)
+
+IC <- c(lower_bound2, upper_bound2)
+names(IC) <- c("Lower", "Upper")
+IC
+
+```
