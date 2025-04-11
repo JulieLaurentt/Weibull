@@ -16,6 +16,10 @@ Nous étudions le processus de Weibull (power law process dans la terminologie a
 
 \
 
+Nous allons commencer par estimer les paramètres du processus α et β, puis nous regarderons leurs lois,
+ensuite nous déterminerons leurs intervalles de confiance asymptotiques et nous finirons par construire un
+test d’adéquation pour déterminer si un échantillon peut être modélisé par un processus de Weibull.
+
 
 #### 1. 1 Estimateurs des paramètres inconnus :
 \
@@ -47,7 +51,7 @@ $\left(-\int_0^T \lambda(x)dx \right)$=$\left(-\int_0^T \frac{\beta}{\alpha}(\fr
 \
 
 Nous passons au log pour calculer la logvraisemblance (nous travaillons sur R+) afin de passer d'un produit à une somme et de nous faciliter les prochains calculs:
-=> justifier que on travail sur R+
+
 
 $l((N_t)_{t \in[0,T]; \theta})=log(L((N_t)_{t \in[0,T]; \theta}))$ = $N_t((log(\beta)-\beta log(\alpha))+ (\beta-1) \sum_{i=1}^{N_t}log(T_i)-(\frac{t}{\alpha})^\beta$
 
@@ -62,9 +66,9 @@ $$\nabla l =
 Dans notre cas, on cherche à trouver le point où le gradient s'annule (présence de maximum ou de minimum) ainsi $\nabla l=0$ soit :
 
 
-$$\begin{bmatrix}log(\frac{\beta}{\alpha}(\frac{T}{\alpha})^{\beta}) = log(\frac{\beta}{\alpha}N_t) ^{*}\\\frac{1}{\beta} = log(\alpha) -\frac{1}{N_t} \sum_{i=1}^{N_t}log(T_i) + \frac{1}{N_t}log(\frac{T}{\alpha})exp(\beta\log(\frac{T}{\alpha})) \end{bmatrix}$$
+$$\begin{bmatrix}log(\frac{\beta}{\alpha}(\frac{T}{\alpha})^{\beta}) = log(\frac{\beta}{\alpha}N_t) ~~(0)\\\frac{1}{\beta} = log(\alpha) -\frac{1}{N_t} \sum_{i=1}^{N_t}log(T_i) + \frac{1}{N_t}log(\frac{T}{\alpha})exp(\beta\log(\frac{T}{\alpha})) \end{bmatrix}$$
 
-or d'après * on peut en déduire que :
+or d'après (0) on peut en déduire que :
 
 $log(\beta)-log(\alpha) +{\beta}log(\frac{T}{\alpha}) = log(\beta) -log(\alpha) +log(N_t)$
 \
@@ -529,7 +533,7 @@ $$ \sqrt{N(t)}(\frac{\hat\beta}{\beta}-1) \quad (3)$$
 $$ \sqrt{N(t)}(\frac{\beta}{\hat\beta}-1) \quad (4)$$
 
 
-Construisons les intervalles de confiance asymptotiques bilatéraux associés.
+Construisons les intervalles de confiance asymptotiques bilatéraux associés à (1) et (3).
 
 Soit $n_\gamma$ le quantile d'ordre $\gamma$ d'une $\mathcal{N} (0,1)$, 
 
@@ -784,9 +788,9 @@ Numériquement, nous confirmons bien nos résultats théoriques sur les interval
 Afin d'être certain, testons avec d'autres valeurs de $\alpha$ et $\beta$.
 Testons la convergence de nos estimateurs lorsque t tend vers $+\infty$ avec $\alpha$=0.5 et $\beta$=0.9 :
 ```{r}
-alpha=1
-beta=2
-Tillustr=3:200
+alpha=0.5
+beta=0.9
+Tillustr=2:1502
 MLEalpha=c()
 MLEbeta=c()
 interalpha=c()
@@ -804,7 +808,7 @@ for (Tmax in Tillustr){
   }
 plot(Tillustr,MLEalpha,xlab="Tmax",ylab="MLEalpha")
 abline(h=alpha,col="red",lwd=alpha)
-print(paste("Proportion de alpha_MLE qui appartiennent à l'IC :" , mean(interalpha)))
+print(paste("Proportion de alpha_MLE qui appartiennent à l'IC :" , mean(interalpha[900:1500])))
 ```
 
 
@@ -813,6 +817,10 @@ plot(Tillustr,MLEbeta,xlab="Tmax",ylab="MLEbeta")
 abline(h=beta,col="red",lwd=beta)
 print(paste("Proportion de beta_MLE qui appartiennent à l'IC :" , mean(interbeta)))
 ```
+Finalement, nous pouvons dire que la convergence des estimateurs est plus ou moins rapide selon la valeur fixée.
+
+
+
 ### Test d'adéquation sur le jeu de données Boeing 720.
 
 Dans la partie suivante, nous allons illustrer la réalisation numérique de la phase de test d’adéquation à l’aide d’un jeu de données représentant les intervalles entre les pannes de l’air conditionné dans une flotte d’avions Boeing 720.
@@ -943,3 +951,17 @@ names(IC) <- c("Lower", "Upper")
 IC
 
 ```
+
+
+
+L’analyse des données de pannes de l’avion B7909 à l’aide du Power Law Process (PLP) permet de modéliser
+l’évolution du taux de défaillance dans le temps. Ce modèle repose sur deux paramètres :
+le paramètre de forme β qui indique la présence ou non d’une tendance,
+et le paramètre d’échelle α lié au taux de pannes initial.
+L’estimation obtenue pour β est d’environ 1,15. Toutefois, son intervalle de confiance à 95% contient la valeur
+1, ce qui signifie que l’on ne peut pas rejeter l’hypothèse d’un processus de Poisson homogène. Autrement
+dit, il n’y a pas de preuve statistique suffisante d’un vieillissement ou d’un rajeunissement du système.
+En résumé, les données sont compatibles avec un processus sans tendance marquée, et le PLP permet d’en
+encadrer les caractéristiques principales.
+
+
